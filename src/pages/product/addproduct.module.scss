@@ -1,0 +1,513 @@
+@import "../../styles/helpers";
+
+.widgetBlock {
+  padding: 12px 0;
+  background-color: $base-light-gray;
+  border-radius: 8px;
+}
+
+.widgetBody {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.smallWidget {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+
+  .mutedPink {
+    background-color: #FF566830;
+  }
+
+  .mutedYellow {
+    background-color: #FFC40530;
+  }
+
+  .mutedTeal {
+    background-color: #41D5E230;
+  }
+
+  .mutedViolet {
+    background-color: #4D53E030;
+  }
+//  доделать для остальных цветов прогресс баров
+}
+
+.image {
+  margin-right: 16px;
+  width: 80px;
+  height: 80px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.userParams {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 32px;
+}
+
+.goals {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 54px 0;
+}
+
+.goalsTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.goal {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.statsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 48px;
+  padding: 24px 36px;
+  border-radius: 8px;
+
+  @media (max-width: breakpoint-max(sm)) {
+    padding: 20px 24px;
+  }
+
+  .pieImg {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+  }
+}
+
+.responsiveWidget {
+  @media (max-width: breakpoint-max(lg)) {
+    padding: 24px 12px;
+  }
+}
+
+/* add manual css from full version */
+
+.form-control{
+  background-color: #fff;
+    height: 45px;
+    border-radius: 0.5rem;
+    padding-left: 1rem;
+    font-size: 1rem;
+}
+
+.rc-color-picker-wrap{
+  display: flex !important;
+}
+.rc-color-picker-wrap span{
+  width: 28px;
+    height: 28px;
+}
+.rc-color-picker-trigger{
+  border: 1px solid #999;
+    display: inline-block;
+    padding: 2px;
+    border-radius: 2px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 2px #fff;
+}
+
+.react-datepicker-wrapper{
+  display: inline-block;
+    padding: 0;
+    border: 0;
+}
+
+.react-datepicker__input-container{
+  position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.react-datepicker__input-container input{
+  padding: 4px 8px;
+    border: 1px solid #6b859e;
+    border-radius: 8px;
+    color: #6b859e;
+}
+
+button, input{
+  overflow: visible;
+}
+
+button, input, optgroup, select, textarea{
+  margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.react-datepicker__close-icon{
+  cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    padding: 0 6px 0 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.react-datepicker__close-icon:after{
+  cursor: pointer;
+    background-color: #216ba5;
+    color: #fff;
+    border-radius: 50%;
+    height: 16px;
+    width: 16px;
+    padding: 2px;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    content: "\00d7";
+}
+
+/* style for dropdown start  */
+
+.css-2b097c-container{
+  position: relative;
+    box-sizing: border-box;
+}
+
+.css-7pg0cj-a11yText{
+  z-index: 9999;
+    border: 0px;
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    width: 1px;
+    position: absolute;
+    overflow: hidden;
+    padding: 0px;
+    white-space: nowrap;
+}
+
+.css-yk16xz-control{
+  -webkit-box-align: center;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(204, 204, 204);
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: default;
+    display: flex;
+    flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    min-height: 38px;
+    position: relative;
+    transition: all 100ms ease 0s;
+    box-sizing: border-box;
+    outline: 0px !important;
+}
+.css-1hwfws3{
+  -webkit-box-align: center;
+    align-items: center;
+    display: flex;
+    flex: 1 1 0%;
+    flex-wrap: wrap;
+    padding: 2px 8px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.css-1uccc91-singleValue{
+  color: rgb(51, 51, 51);
+    margin-left: 2px;
+    margin-right: 2px;
+    max-width: calc(100% - 8px);
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    top: 50%;
+    transform: translateY(-50%);
+    box-sizing: border-box;
+}
+.css-1g6gooi{
+  margin: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    visibility: visible;
+    color: rgb(51, 51, 51);
+    box-sizing: border-box;
+}
+
+.css-1wy0on6{
+  -webkit-box-align: center;
+    align-items: center;
+    align-self: stretch;
+    display: flex;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.css-1okebmr-indicatorSeparator{
+  align-self: stretch;
+    background-color: rgb(204, 204, 204);
+    margin-bottom: 8px;
+    margin-top: 8px;
+    width: 1px;
+    box-sizing: border-box;
+}
+.css-tlfecz-indicatorContainer{
+  color: rgb(204, 204, 204);
+    display: flex;
+    padding: 8px;
+    transition: color 150ms ease 0s;
+    box-sizing: border-box;
+}
+.css-8mmkcg{
+  display: inline-block;
+    fill: currentcolor;
+    line-height: 1;
+    stroke: currentcolor;
+    stroke-width: 0;
+}
+svg{
+  overflow: hidden;
+}
+img, svg{
+  vertical-align: middle;
+}
+
+/* image upload */
+
+.Widget_widget__16nWC{
+  position: relative;
+    display: block;
+    border-radius: 8px;
+    background: #fff;
+    height: 100%;
+}
+.widget-p-md{
+  padding: 24px;
+}
+.headline-2{
+  font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 30px;
+}
+.mb-3, .my-3{
+  margin-bottom: 1rem!important;
+}
+.form-group{
+  margin-bottom: 1rem;
+}
+
+.row{
+  display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+@media (min-width: 768px){
+.text-md-right{
+  text-align: right!important;
+}
+}
+.pl-2, .px-2{
+  padding-left: 0.5rem!important;
+}
+.pb-2, .py-2{
+  padding-bottom: 0.5rem!important;
+}
+.pr-2, .px-2{
+  padding-right: 0.5rem!important;
+}
+.pt-2, .py-2{
+  padding-top: 0.5rem!important;
+}
+.mb-4, .my-4{
+  margin-bottom: 1.5rem!important;
+}
+.rounded-pill{
+  border-radius: 50rem!important;
+}
+.bg-light-gray{
+  background-color: #f7f8fb!important;
+}
+
+.input-group{
+  position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+.input-group.has-validation>.custom-file:nth-last-child(n+3) .custom-file-label:after, .input-group.has-validation>.custom-select:nth-last-child(n+3), .input-group.has-validation>.form-control:nth-last-child(n+3), .input-group:not(.has-validation)>.custom-file:not(:last-child) .custom-file-label:after, .input-group:not(.has-validation)>.custom-select:not(:last-child), .input-group:not(.has-validation)>.form-control:not(:last-child){
+  border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.input-group>.custom-file, .input-group>.custom-select, .input-group>.form-control, .input-group>.form-control-plaintext{
+  position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    margin-bottom: 0;
+}
+.Elements_upload__3DkRJ{
+  opacity: 0;
+}
+.text-muted{
+  color: #6b859e!important;
+}
+.font-weight-light{
+  font-weight: 300!important;
+}
+.Elements_uploadLabel__3xshw{
+  position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+}
+.input-group-append{
+  margin-left: -1px;
+}
+.input-group-append, .input-group-prepend{
+  display: flex;
+}
+.btn:not(:disabled):not(.disabled){
+  cursor: pointer;
+}
+.btn:not(.active){
+  box-shadow: none!important;
+}
+.input-group-append .btn, .input-group-prepend .btn{
+  position: relative;
+    z-index: 2;
+}
+.btn, .dropdown-item, a{
+  cursor: pointer;
+    transition: color .1s ease-in-out,background-color .1s ease-in-out,border-color .1s ease-in-out;
+    font-family: poppins,sans-serif;
+}
+.pl-4, .px-4{
+  padding-left: 1.5rem!important;
+}
+.pr-4, .px-4{
+  padding-right: 1.5rem!important;
+}
+.m-0{
+  margin: 0!important;
+}
+.eva, .fa{
+  font-size: 24px;
+}
+.fa{
+  display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.mt-2, .my-2{
+  margin-top: 0.5rem!important;
+}
+.Elements_imageArea__1uoYY{
+    min-height: 100px;
+    border: 2px dashed #c7d0d9;
+    border-radius: 8px;
+    padding: 1.25rem;
+    position: relative;
+}
+.Elements_imageArea__1uoYY:before{
+  content: "Uploaded image result";
+    color: #6b859e;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: .8rem;
+    z-index: 1;
+}
+.Elements_imageArea__1uoYY:after{
+    color: #6b859e;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: .8rem;
+    z-index: 1;
+}
+.Elements_imageArea__1uoYY img{
+    z-index: 2;
+    position: relative;
+}
+.ml-auto, .mx-auto{
+  margin-left: auto!important;
+}
+.mr-auto, .mx-auto{
+  margin-right: auto!important;
+}
+.shadow-sm{
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075)!important;
+}
+.d-block{
+  display: block!important;
+}
+.rounded{
+  border-radius: 8px!important;
+}
+.img-fluid, .img-thumbnail{
+  max-width: 100%;
+    height: auto;
+}
+.multi-img-fluid, .multi-img-thumbnail{
+  max-width: 300px;
+  height: 200px;
+  padding-top: 15px;
+}
+.Elements_dropzone__n5Vdq{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.25rem;
+    height: 150px;
+    border: 2px dashed #c7d0d9;
+    border-radius: 8px;
+    position: relative;
+}
+.tableTitle {
+  display: flex;
+  justify-content: space-between;
+  padding: 24px 24px;
+
+  img {
+    margin-left: 16px;
+  }
+}
