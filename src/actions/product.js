@@ -9,7 +9,7 @@ const configtoken = {
 }
 
 export async function getProduct() {
-    return await axios.get(apiurl + "product/getAll",configtoken);
+    return await axios.get(apiurl + "product/getAll");
 }
 
 export async function save(formInputs, selectedImage, config) {
@@ -93,5 +93,5 @@ export async function removeProduct(productid) {
 }
 
 export async function getProductDetailById(productid) {
-    return await axios.get(apiurl + `product/getproductbyid/${productid}`, configtoken);
+    return await axios.get(apiurl + `product/getproductbyid/${productid}`);
 }

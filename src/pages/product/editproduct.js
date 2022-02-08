@@ -71,7 +71,7 @@ const Editproduct = (props) => {
             let Array = responsesubcategory.data.filter(item => item.category._id == data.category);
             setSubcategoryArray(Array);
             setFormInputs({
-                category: data.category, subcategory: data.subcategory, tools: data.tools, title: data.title,
+                category: data.category, subcategory: data.subcategory, tools: data.tools._id, title: data.title,
                 admin: data.adminname, link: data.sharelink, overview: data.overview, highlight: data.highlight
             });
 

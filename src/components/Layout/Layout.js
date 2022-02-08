@@ -24,6 +24,8 @@ import EditCategory from "../../pages/category/editcategory";
 import EditSubCategory from "../../pages/subcategory/editsubcategory";
 import EditTool from "../../pages/tools/edittools";
 import Usermanagement from "../../pages/user/usermanagement";
+import Addbanner from "../../pages/banner/banner";
+import Bannerlist from "../../pages/banner/bannerlist";
 
 // -- Component Styles
 import s from "./Layout.module.scss";
@@ -52,6 +54,8 @@ const Layout = (props) => {
             <Route path="/template/editsubcategory/:posturl" exact component={EditSubCategory}></Route>
             <Route path="/template/edittool/:posturl" exact component={EditTool}></Route>
             <Route path="/template/usermanagement" exact component={Usermanagement}></Route>
+            <Route path="/template/addbanner" exact component={Addbanner}></Route>
+            <Route path="/template/banner" exact component={Bannerlist}></Route>
             <Route path='*' exact render={() => <Redirect to="/error" />} />
           </Switch>
         </main>

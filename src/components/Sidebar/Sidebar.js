@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button} from 'reactstrap';
+import { Button } from 'reactstrap';
 import { withRouter } from 'react-router-dom';
 import s from "./Sidebar.module.scss";
 import LinksGroup from "./LinksGroup/LinksGroup.js";
@@ -29,9 +29,9 @@ const Sidebar = (props) => {
   }, [props.sidebarOpened])
 
   return (
-    <nav className={cn(s.root, {[s.sidebarOpen]: burgerSidebarOpen})} >
+    <nav className={cn(s.root, { [s.sidebarOpen]: burgerSidebarOpen })} >
       <header className={s.logo}>
-        <SofiaLogo/>
+        <SofiaLogo />
         <span className={s.title}>Market Place</span>
       </header>
       <ul className={s.nav}>
@@ -40,7 +40,7 @@ const Sidebar = (props) => {
           activeItem={props.activeItem}
           header="Dashboard"
           isHeader
-          iconName={<i className={'eva eva-home-outline'}/>}
+          iconName={<i className={'eva eva-home-outline'} />}
           link="/template/dashboard"
           index="dashboard"
         />
@@ -49,7 +49,7 @@ const Sidebar = (props) => {
           activeItem={props.activeItem}
           header="Category"
           isHeader
-          iconName={<i className={'eva eva-file-text-outline'}/>}
+          iconName={<i className={'eva eva-file-text-outline'} />}
           link="/template/category"
           index="Category"
         />
@@ -58,7 +58,7 @@ const Sidebar = (props) => {
           activeItem={props.activeItem}
           header="SubCategory"
           isHeader
-          iconName={<i className={'eva eva-file-text-outline'}/>}
+          iconName={<i className={'eva eva-file-text-outline'} />}
           link="/template/subcategory"
           index="SubCategory"
         />
@@ -67,7 +67,7 @@ const Sidebar = (props) => {
           activeItem={props.activeItem}
           header="Tool"
           isHeader
-          iconName={<i className={'eva eva-file-text-outline'}/>}
+          iconName={<i className={'eva eva-file-text-outline'} />}
           link="/template/tool"
           index="Tool"
         />
@@ -76,7 +76,7 @@ const Sidebar = (props) => {
           activeItem={props.activeItem}
           header="Product"
           isHeader
-          iconName={<i className={'eva eva-file-text-outline'}/>}
+          iconName={<i className={'eva eva-file-text-outline'} />}
           link="/template/product"
           index="Product"
         />
@@ -84,9 +84,23 @@ const Sidebar = (props) => {
           activeItem={props.activeItem}
           header="User"
           isHeader
-          iconName={<i className={'eva eva-file-text-outline'}/>}
+          iconName={<i className={'eva eva-file-text-outline'} />}
           link="/template/usermanagement"
           index="User Management" />
+        <LinksGroup onActiveSidebarItemChange={activeItem => props.dispatch(changeActiveSidebarItem(activeItem))}
+          activeItem={props.activeItem}
+          header="Add Banner"
+          isHeader
+          iconName={<i className={'eva eva-file-text-outline'} />}
+          link="/template/addbanner"
+          index="Add Banner" />
+          <LinksGroup onActiveSidebarItemChange={activeItem => props.dispatch(changeActiveSidebarItem(activeItem))}
+          activeItem={props.activeItem}
+          header="Banner"
+          isHeader
+          iconName={<i className={'eva eva-file-text-outline'} />}
+          link="/template/banner"
+          index="Banner" />
         {/* <LinksGroup
           onActiveSidebarItemChange={activeItem => props.dispatch(changeActiveSidebarItem(activeItem))}
           activeItem={props.activeItem}

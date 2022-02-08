@@ -30,24 +30,25 @@ const PrivateRoute = ({ dispatch, component, ...rest }) => {
     return (<Redirect to="/login" />)
   } else {
     return (
-      <Route { ...rest } render={props => (React.createElement(component, props))} />
+      <Route {...rest} render={props => (React.createElement(component, props))} />
     );
   }
 };
 
 const App = (props) => {
+  
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       <HashRouter>
         <Switch>
           <Route path="/" exact render={() => <Redirect to="/login" />} />
-          <Route path="/template" exact render={() => <Redirect to="/template/dashboard"/>}/>
+          <Route path="/template" exact render={() => <Redirect to="/template/dashboard" />} />
           <PrivateRoute path="/template" dispatch={props.dispatch} component={LayoutComponent} />
           <Route path="/login" exact component={Login} />
           <Route path="/error" exact component={ErrorPage} />
           <Route path="/register" exact component={Register} />
-          <Route component={ErrorPage}/>
+          <Route component={ErrorPage} />
           <Route path='*' exact={true} render={() => <Redirect to="/error" />} />
         </Switch>
       </HashRouter>

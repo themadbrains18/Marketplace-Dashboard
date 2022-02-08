@@ -31,7 +31,7 @@ const Addproduct = () => {
     const [Tools, setTools] = useState([]);
     const [validateMessage, setValidateMessage] = useState('');
     const [alert, setAlert] = useState({});
-    const [buttonDisable , setButtonDisable]=useState(false);
+    const [buttonDisable, setButtonDisable] = useState(false);
 
     const initialState = {
         category: "",
@@ -133,6 +133,15 @@ const Addproduct = () => {
 
     // Start upload data into database
 
+    
+    let token = localStorage.getItem('access_token');
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+            'Authorization': 'Bearer ' + token
+        }
+    }
+
     let saveChanges = (e) => {
         e.preventDefault();
         setButtonDisable(true);
@@ -164,13 +173,7 @@ const Addproduct = () => {
     }
 
     async function saveProduct() {
-        let token = localStorage.getItem('access_token');
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data',
-                'Authorization': 'Bearer ' + token
-            }
-        }
+
         let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight }
         let response = await save(formInputs, selectedImage, config);
         if (response.data) {
@@ -213,13 +216,6 @@ const Addproduct = () => {
     }
 
     async function saveProductSlider() {
-        let token = localStorage.getItem('access_token');
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data',
-                'Authorization': 'Bearer ' + token
-            }
-        }
         let response = await saveSlider(productId, selectedSliderImage, config);
         if (response.data) {
             if (response.data.status == 200) {
@@ -247,14 +243,6 @@ const Addproduct = () => {
     }
 
     async function saveProductPreview() {
-
-        let token = localStorage.getItem('access_token');
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data',
-                'Authorization': 'Bearer ' + token
-            }
-        }
         let response = await savePreview(productId, selectedPreviewImage, config);
         if (response.data) {
             if (response.data.status == 200) {
@@ -427,7 +415,7 @@ const Addproduct = () => {
                                                     <div className="row form-group">
                                                         <label className="col-md-5 col-form-label"></label>
                                                         <div className="col-md-7">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary"  style={{ cursor:buttonDisable == true ? 'not-allowed' : '', pointerEvents:buttonDisable == true ? 'none' : '', opacity : buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Save Changes</button>
+                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Save Changes</button>
                                                             <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
                                                         </div>
                                                     </div>
