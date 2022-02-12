@@ -104,7 +104,7 @@ const Addbanner = () => {
                                                     <div className="row form-group">
                                                         <label className="col-md-5 col-form-label"></label>
                                                         <div className="col-md-7">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Upload Slider</button>
+                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Upload Banner</button>
                                                             <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
                                                         </div>
                                                     </div>
