@@ -162,7 +162,7 @@ const Addproduct = () => {
 
     let saveChanges = (e) => {
         e.preventDefault();
-        setButtonDisable(true);
+        
         if (category == undefined) {
             setValidateMessage('Please select category');
         } else if (subcategory == undefined) {
@@ -191,7 +191,7 @@ const Addproduct = () => {
     }
 
     async function saveProduct() {
-
+        setButtonDisable(true);
         let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight,template }
         let response = await save(formInputs, selectedImage, config);
         if (response.data) {
