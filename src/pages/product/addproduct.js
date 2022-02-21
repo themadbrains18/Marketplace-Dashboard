@@ -7,7 +7,7 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
-import { save, saveSlider, savePreview } from '../../actions/product';
+import { save, saveSlider, savePreview, saveDownloadFiles } from '../../actions/product';
 import { getCategory } from '../../actions/category';
 import { getSubCategory } from '../../actions/subcategory';
 import { getTools } from '../../actions/tools';
@@ -23,6 +23,10 @@ const Addproduct = () => {
     const [showFormSection, setShowFormSection] = useState(true);
     const [showSliderSection, setShowSliderSection] = useState(false);
     const [showPreviewSection, setShowPreviewSection] = useState(false);
+    const [showDownloadFileSection, setShowDownloadFileSection] = useState(false);
+    
+
+    const [selectedDownloadableFile, setSelectedDownloadableFile] = useState([]);
     // Form field inputs values
 
     const [productId, setProductId] = useState(0);
@@ -41,10 +45,11 @@ const Addproduct = () => {
         admin: "",
         link: "",
         overview: "",
-        highlight: ""
+        highlight: "",
+        template:""
     };
 
-    const [{ category, subcategory, tools, title, admin, link, overview, highlight }, setFormInputs] = useState([]);
+    const [{ category, subcategory, tools, title, admin, link, overview, highlight,template }, setFormInputs] = useState([]);
 
     // onLoad get master table data
     useEffect(() => {
@@ -131,9 +136,22 @@ const Addproduct = () => {
         setFormInputs(prevState => ({ ...prevState, 'highlight': e }));
     }
 
+    // upload downloadable files of product
+    let downloadFileUpload = (e) => {
+        debugger;
+        let downloadFileArray = [];
+
+        if (e.target.files && e.target.files.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                downloadFileArray.push(e.target.files[i]);
+            }
+            setSelectedDownloadableFile(downloadFileArray);
+            setFormInputs(prevState => ({ ...prevState, [e.target.name]: downloadFileArray }));
+        }
+    }
+
     // Start upload data into database
 
-    
     let token = localStorage.getItem('access_token');
     const config = {
         headers: {
@@ -174,7 +192,7 @@ const Addproduct = () => {
 
     async function saveProduct() {
 
-        let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight }
+        let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight,template }
         let response = await save(formInputs, selectedImage, config);
         if (response.data) {
             if (response.data.status == 401) {
@@ -195,6 +213,7 @@ const Addproduct = () => {
                     setShowFormSection(false);
                     setShowPreviewSection(false);
                     setShowSliderSection(true);
+                    setShowDownloadFileSection(false);
                 }, 3000);
             }
             else {
@@ -206,6 +225,7 @@ const Addproduct = () => {
 
     let uploadSlider = (e) => {
         e.preventDefault();
+        setButtonDisable(true);
         if (selectedSliderImage == '') {
             setValidateMessage('Please upload slider image');
         }
@@ -221,18 +241,24 @@ const Addproduct = () => {
             if (response.data.status == 200) {
                 setAlert({ type: 'success', message: response.data.message })
                 setTimeout(() => {
+                    setButtonDisable(false);
                     setAlert({})
                     setSelectedSliderImage([]);
                     setShowFormSection(false);
                     setShowSliderSection(false);
                     setShowPreviewSection(true);
+                    setShowDownloadFileSection(false);
                 }, 3000);
+            }
+            else{
+                setButtonDisable(false);
             }
         }
     }
 
     let uploadPreview = (e) => {
         e.preventDefault();
+        setButtonDisable(true);
         if (selectedPreviewImage == '') {
             setValidateMessage('Please upload Preview image');
         }
@@ -248,13 +274,55 @@ const Addproduct = () => {
             if (response.data.status == 200) {
                 setAlert({ type: 'success', message: response.data.message })
                 setTimeout(() => {
+                    setButtonDisable(false);
                     setAlert({})
                     setselectedPreviewImage([]);
                     setShowSliderSection(false);
                     setShowPreviewSection(false);
+                    setShowDownloadFileSection(true);
+                    setShowFormSection(false);
+                }, 3000);
+            }
+            else{
+                setButtonDisable(false);
+            }
+
+        }
+
+    }
+
+
+    let uploadDownloadFile = (e) => {
+        e.preventDefault();
+        setButtonDisable(true);
+        if (selectedDownloadableFile == '') {
+            setValidateMessage('Please upload download file');
+        }
+        else {
+            saveDownloadFile();
+        }
+
+    }
+
+    async function saveDownloadFile() {
+        debugger;
+        let response = await saveDownloadFiles('skilify',productId, selectedDownloadableFile, config);
+        if (response.data) {
+            if (response.data.status == 200) {
+                setAlert({ type: 'success', message: response.data.message })
+                setTimeout(() => {
+                    setButtonDisable(false);
+                    setAlert({})
+                    setSelectedDownloadableFile([]);
+                    setShowSliderSection(false);
+                    setShowPreviewSection(false);
+                    setShowDownloadFileSection(false);
                     setShowFormSection(true);
                     setProductId(0)
                 }, 3000);
+            }
+            else{
+                setButtonDisable(false);
             }
 
         }
@@ -326,6 +394,19 @@ const Addproduct = () => {
                                                                     {Tools.map((val, index) => {
                                                                         return <option value={val._id}>{val.name}</option>
                                                                     })}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row form-group">
+                                                        <label htmlFor="grouped-select" className="text-md-right col-md-4 col-form-label">Template Type</label>
+                                                        <div className="col-md-8">
+                                                            <div className=" css-2b097c-container">
+                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
+                                                                <select name="template" value={template} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
+                                                                    <option selected>Select Template</option>
+                                                                    <option value="web">Website</option>
+                                                                    <option value="mob">Mobile</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -454,7 +535,7 @@ const Addproduct = () => {
                                                     <div className="row form-group">
                                                         <label className="col-md-5 col-form-label"></label>
                                                         <div className="col-md-7">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" onClick={(event) => uploadSlider(event)}>Upload Slider</button>
+                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == true ?'':uploadSlider(event)}>Upload Slider</button>
                                                             <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
                                                         </div>
                                                     </div>
@@ -489,7 +570,41 @@ const Addproduct = () => {
                                                 <div className="row form-group">
                                                     <label className="col-md-5 col-form-label"></label>
                                                     <div className="col-md-7">
-                                                        <button type="submit" className="mr-3 mt-3 btn btn-primary" onClick={(event) => uploadPreview(event)}>Upload Preview</button>
+                                                        <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == true ?'':uploadPreview(event)}>Upload Preview</button>
+                                                        <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+
+                                <div className="mt-4 mt-md-0 col-12 col-lg-9" style={{ display: showDownloadFileSection == true ? 'block' : 'none', margin: 'auto' }}>
+                                    <section className="Widget_widget__16nWC">
+                                        <div className="widget-p-md">
+                                            <div className="headline-2">Downloadable File Upload </div>
+                                            <div className="form-group">
+                                                {/* Multi Preview File upload start */}
+                                                <div className="row form-group">
+                                                    <label className="text-md-right mt-3 col-lg-4 col-form-label">Preview Files Upload</label>
+                                                    <div className="col-lg-8">
+                                                        <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                            <input id="multiupload" name="downloadFile" type="file" onChange={(e) => downloadFileUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                            <label id="multiupload-label" htmlFor="multiupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                        </div>
+                                                        <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div>
+                                                        <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
+                                                            {selectedDownloadableFile.map((val, index) => {
+                                                                return  <label className="col-md-5 col-form-label">{val.name}</label>
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* Multi Preview File upload end */}
+                                                <div className="row form-group">
+                                                    <label className="col-md-5 col-form-label"></label>
+                                                    <div className="col-md-7">
+                                                        <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == true ?'': uploadDownloadFile(event)}>Upload Preview</button>
                                                         <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
                                                     </div>
                                                 </div>

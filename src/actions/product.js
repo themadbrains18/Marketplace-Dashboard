@@ -22,6 +22,7 @@ export async function save(formInputs, selectedImage, config) {
     formData.set('link', formInputs.link);
     formData.set('overview', formInputs.overview);
     formData.set('highlight', formInputs.highlight);
+    formData.set('template', formInputs.template);
     if (selectedImage != '') {
         formData.append("file", selectedImage);
     }
@@ -45,6 +46,7 @@ export async function update(productid, formInputs, selectedImage, config) {
     formData.set('link', formInputs.link);
     formData.set('overview', formInputs.overview);
     formData.set('highlight', formInputs.highlight);
+    formData.set('template', formInputs.template);
     if (selectedImage != '') {
         formData.append("file", selectedImage);
     }
@@ -94,4 +96,20 @@ export async function removeProduct(productid) {
 
 export async function getProductDetailById(productid) {
     return await axios.get(apiurl + `product/getproductbyid/${productid}`);
+}
+
+
+export async function saveDownloadFiles(name,productId, selectedPreviewImage, config) {
+    debugger;
+    let formData = new FormData();
+    formData.set('name', name);
+    formData.set('productid', productId);
+    for (let j = 0; j < selectedPreviewImage.length; j++) {
+        formData.append("downloadFile", selectedPreviewImage[j]);
+    }
+    return await axios.post(apiurl + `productdownload`, formData, config).then(function (response) {
+        if (response.data) {
+            return response;
+        }
+    });
 }

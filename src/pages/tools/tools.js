@@ -173,7 +173,7 @@ const Tools = function () {
     }
 
     const editTool = (id) => {
-        window.location.href = "/#/template/edittool/" + id;
+        window.location.href = "#/template/edittool/" + id;
     }
 
     return (

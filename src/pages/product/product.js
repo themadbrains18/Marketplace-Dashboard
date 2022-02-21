@@ -63,7 +63,7 @@ const Product = function () {
 
     const redirectProductform = (e) => {
         e.preventDefault();
-        window.location.href = '/#/template/addproduct';
+        window.location.href = '#/template/addproduct';
     }
 
     // onclick more option 
@@ -103,7 +103,7 @@ const Product = function () {
     }
 
     const editProduct = (id) => {
-        window.location.href = "/#/template/editproduct/" + id;
+        window.location.href = "#/template/editproduct/" + id;
     }
 
 

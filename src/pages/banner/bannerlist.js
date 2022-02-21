@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+
 import {
     Col,
     Row,
@@ -25,6 +26,7 @@ import { getBanner , removeBanner } from '../../actions/banner';
 import moreIcon from "../../assets/tables/moreIcon.svg";
 import s from "./banner.module.scss";
 import AlertNotification from '../../components/AlertNotification/notification';
+const {apiurl ,imageUrl} = require('../../config');
 
 const Bannerlist = () => {
 
@@ -132,7 +134,7 @@ const Bannerlist = () => {
                                                 )
                                                 .map(item => (
                                                     <tr key={uuidv4()}>
-                                                        <td className="d-flex"><img src={"http://localhost:3002/images/"+item.image} className="img-fluid rounded shadow-sm d-block"/></td>
+                                                        <td className="d-flex"><img src={imageUrl +"images/"+item.image} className="img-fluid rounded shadow-sm d-block"/></td>
                                                         
                                                         <td>
                                                             <Dropdown

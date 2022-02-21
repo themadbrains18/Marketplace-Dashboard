@@ -7,12 +7,13 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
-import { update, saveSlider, savePreview, getProductDetailById } from '../../actions/product';
+import { update, saveSlider, savePreview, getProductDetailById, saveDownloadFiles } from '../../actions/product';
 import { getCategory } from '../../actions/category';
 import { getSubCategory } from '../../actions/subcategory';
 import { getTools } from '../../actions/tools';
 import AlertNotification from '../../components/AlertNotification/notification';
 import s from "./addproduct.module.scss";
+const {apiurl, imageUrl} = require('../../config');
 
 const Editproduct = (props) => {
 
@@ -23,6 +24,9 @@ const Editproduct = (props) => {
     const [showFormSection, setShowFormSection] = useState(true);
     const [showSliderSection, setShowSliderSection] = useState(false);
     const [showPreviewSection, setShowPreviewSection] = useState(false);
+    const [showDownloadFileSection, setShowDownloadFileSection] = useState(false);
+
+    const [selectedDownloadableFile, setSelectedDownloadableFile] = useState([]);
     // Form field inputs values
 
     const [productId, setProductId] = useState(0);
@@ -30,11 +34,12 @@ const Editproduct = (props) => {
     const [Subcategory, setSubCategoryData] = useState([]);
     const [Tools, setTools] = useState([]);
     const [validateMessage, setValidateMessage] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [productUrl, setImageUrl] = useState('');
     const [sliderImages, setSliderImages] = useState([]);
     const [previewImages, setPreviewImages] = useState([]);
     const [alert, setAlert] = useState({});
-    const [buttonDisable , setButtonDisable]=useState(false);
+    const [buttonDisable, setButtonDisable] = useState(false);
+    const [downloadableFile, setDownloadableFile]=useState([]);
 
     const initialState = {
         category: "",
@@ -44,10 +49,11 @@ const Editproduct = (props) => {
         admin: "",
         link: "",
         overview: "",
-        highlight: ""
+        highlight: "",
+        template:""
     };
 
-    const [{ category, subcategory, tools, title, admin, link, overview, highlight }, setFormInputs] = useState([]);
+    const [{ category, subcategory, tools, title, admin, link, overview, highlight,template }, setFormInputs] = useState([]);
 
     // onLoad get master table data
     useEffect(() => {
@@ -66,13 +72,14 @@ const Editproduct = (props) => {
             let data = response.data.product;
             setSliderImages(response.data.productslider);
             setPreviewImages(response.data.productPreview);
-            setImageUrl("http://localhost:3002/images/" + data.image);
+            setDownloadableFile(response.data.downloadablefile);
+            setImageUrl(imageUrl+"images/" + data.image);
             const responsesubcategory = await getSubCategory();
             let Array = responsesubcategory.data.filter(item => item.category._id == data.category);
             setSubcategoryArray(Array);
             setFormInputs({
                 category: data.category, subcategory: data.subcategory, tools: data.tools._id, title: data.title,
-                admin: data.adminname, link: data.sharelink, overview: data.overview, highlight: data.highlight
+                admin: data.adminname, link: data.sharelink, overview: data.overview, highlight: data.highlight,template:data.template
             });
 
         } catch (e) {
@@ -200,7 +207,7 @@ const Editproduct = (props) => {
     }
 
     async function saveProduct() {
-        let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight }
+        let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight,template }
 
         let productid = props.match.params.posturl;
         let response = await update(productid, formInputs, selectedImage, config);
@@ -223,6 +230,7 @@ const Editproduct = (props) => {
                     setShowFormSection(false);
                     setShowPreviewSection(false);
                     setShowSliderSection(true);
+                    setShowDownloadFileSection(false);
                 }, 3000);
             }
             else {
@@ -250,6 +258,7 @@ const Editproduct = (props) => {
                         setShowFormSection(false);
                         setShowSliderSection(false);
                         setShowPreviewSection(true);
+                        setShowDownloadFileSection(false);
                     }, 3000);
                 }
 
@@ -279,6 +288,64 @@ const Editproduct = (props) => {
                         setselectedPreviewImage([]);
                         setShowSliderSection(false);
                         setShowPreviewSection(false);
+                        setShowDownloadFileSection(true);
+                        setShowFormSection(false);
+                        // setProductId(0)
+                    }, 3000);
+                }
+
+            }
+        }
+        else {
+            setShowSliderSection(false);
+            setShowPreviewSection(false);
+            setShowFormSection(false);
+            setShowDownloadFileSection(true);
+        }
+
+        // window.location.href = '/#/template/product';
+    }
+
+    // upload downloadable files of product
+    let downloadFileUpload = (e) => {
+        debugger;
+        let downloadFileArray = [];
+
+        if (e.target.files && e.target.files.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                downloadFileArray.push(e.target.files[i]);
+            }
+            setSelectedDownloadableFile(downloadFileArray);
+            setDownloadableFile([]);
+            setFormInputs(prevState => ({ ...prevState, [e.target.name]: downloadFileArray }));
+        }
+    }
+
+    let uploadDownloadFile = (e) => {
+        e.preventDefault();
+        if (selectedDownloadableFile == '') {
+            setValidateMessage('Please upload download file');
+        }
+        else {
+            saveDownloadFile();
+        }
+
+    }
+
+    async function saveDownloadFile() {
+        debugger;
+        let productid = props.match.params.posturl;
+        if (selectedDownloadableFile.length > 0) {
+            let response = await saveDownloadFiles('skilify', productid, selectedDownloadableFile, config);
+            if (response.data) {
+                if (response.data.status == 200) {
+                    setAlert({ type: 'success', message: response.data.message })
+                    setTimeout(() => {
+                        setAlert({})
+                        setSelectedDownloadableFile([]);
+                        setShowSliderSection(false);
+                        setShowPreviewSection(false);
+                        setShowDownloadFileSection(false);
                         setShowFormSection(true);
                         setProductId(0)
                     }, 3000);
@@ -289,17 +356,18 @@ const Editproduct = (props) => {
         else {
             setShowSliderSection(false);
             setShowPreviewSection(false);
+            setShowDownloadFileSection(false);
             setShowFormSection(true);
+            setProductId(0)
         }
-
-        window.location.href = '/#/template/product';
+        window.location.href = '#/template/product';
     }
 
     // End upload data into database
 
     // Redirect to product list page
     const redirectProduct = () => {
-        window.location.href = '/#/template/product';
+        window.location.href = '#/template/product';
     }
 
     return (
@@ -360,6 +428,19 @@ const Editproduct = (props) => {
                                                                     {Tools.map((val, index) => {
                                                                         return <option value={val._id}>{val.name}</option>
                                                                     })}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="row form-group">
+                                                        <label htmlFor="grouped-select" className="text-md-right col-md-4 col-form-label">Template Type</label>
+                                                        <div className="col-md-8">
+                                                            <div className=" css-2b097c-container">
+                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
+                                                                <select name="template" value={template} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
+                                                                    <option selected>Select Template</option>
+                                                                    <option value="web">Website</option>
+                                                                    <option value="mob">Mobile</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -441,8 +522,8 @@ const Editproduct = (props) => {
                                                                 {selectedImage && (
                                                                     <img id="imageResult" src={URL.createObjectURL(selectedImage)} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
                                                                 )}
-                                                                {imageUrl && (
-                                                                    <img id="imageResult" src={imageUrl} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
+                                                                {productUrl && (
+                                                                    <img id="imageResult" src={productUrl} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
                                                                 )}
                                                             </div>
                                                         </div>
@@ -452,7 +533,7 @@ const Editproduct = (props) => {
                                                     <div className="row form-group">
                                                         <label className="col-md-5 col-form-label"></label>
                                                         <div className="col-md-7">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor:buttonDisable == true ? 'not-allowed' : '', pointerEvents:buttonDisable == true ? 'none' : '', opacity : buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Save Changes</button>
+                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Save Changes</button>
                                                             <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
                                                         </div>
                                                     </div>
@@ -484,7 +565,7 @@ const Editproduct = (props) => {
                                                                     return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
                                                                 })}
                                                                 {sliderImages.map((val, index) => {
-                                                                    return <img id={"imageResult" + index} src={"http://localhost:3002/images/" + val.image} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
+                                                                    return <img id={"imageResult" + index} src={imageUrl+"images/" + val.image} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
                                                                 })}
                                                             </div>
                                                         </div>
@@ -523,7 +604,7 @@ const Editproduct = (props) => {
                                                                 return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
                                                             })}
                                                             {previewImages.map((val, index) => {
-                                                                return <img id={"imageResult" + index} src={"http://localhost:3002/images/" + val.image} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
+                                                                return <img id={"imageResult" + index} src={imageUrl+"images/" + val.image} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
                                                             })}
                                                         </div>
                                                     </div>
@@ -533,6 +614,43 @@ const Editproduct = (props) => {
                                                     <label className="col-md-5 col-form-label"></label>
                                                     <div className="col-md-7">
                                                         <button type="submit" className="mr-3 mt-3 btn btn-primary" onClick={(event) => uploadPreview(event)}>Upload Preview</button>
+                                                        <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+
+                                <div className="mt-4 mt-md-0 col-12 col-lg-9" style={{ display: showDownloadFileSection == true ? 'block' : 'none', margin: 'auto' }}>
+                                    <section className="Widget_widget__16nWC">
+                                        <div className="widget-p-md">
+                                            <div className="headline-2">Downloadable File Upload </div>
+                                            <div className="form-group">
+                                                {/* Multi Preview File upload start */}
+                                                <div className="row form-group">
+                                                    <label className="text-md-right mt-3 col-lg-4 col-form-label">Preview Files Upload</label>
+                                                    <div className="col-lg-8">
+                                                        <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                            <input id="multiupload" name="downloadFile" type="file" onChange={(e) => downloadFileUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                            <label id="multiupload-label" htmlFor="multiupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                        </div>
+                                                        <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div>
+                                                        <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
+                                                            {selectedDownloadableFile.map((val, index) => {
+                                                                return  <label className="col-md-5 col-form-label">{val.name}</label>
+                                                            })}
+                                                            {downloadableFile.map((val, index) => {
+                                                                return  <label className="col-md-5 col-form-label">{val.name}</label>
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {/* Multi Preview File upload end */}
+                                                <div className="row form-group">
+                                                    <label className="col-md-5 col-form-label"></label>
+                                                    <div className="col-md-7">
+                                                        <button type="submit" className="mr-3 mt-3 btn btn-primary" onClick={(event) => uploadDownloadFile(event)}>Upload Preview</button>
                                                         <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
                                                     </div>
                                                 </div>

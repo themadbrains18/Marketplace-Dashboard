@@ -193,7 +193,7 @@ const Subcategory = function () {
     }
 
     const editSubcategory = (id) => {
-        window.location.href = "/#/template/editsubcategory/" + id;
+        window.location.href = "#/template/editsubcategory/" + id;
     }
 
     const onCategoryChange = (e) => {

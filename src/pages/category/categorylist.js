@@ -172,7 +172,7 @@ const Categorylist = function (props) {
     }
 
     const editProduct = (id) => {
-        window.location.href = "/#/template/editcategory/" + id;
+        window.location.href = "#/template/editcategory/" + id;
     }
 
     return (

@@ -21,6 +21,7 @@ const Addbanner = () => {
         if (e.target.files && e.target.files.length > 0) {
             for (let i = 0; i < e.target.files.length; i++) {
                 imageArray.push(e.target.files[i]);
+                
             }
             setSelectedImage(imageArray);
             setFormInputs(prevState => ({ ...prevState, [e.target.name]: imageArray }));

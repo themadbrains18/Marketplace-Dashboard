@@ -1,4 +1,5 @@
 const axios = require("axios");
+const {apiurl} = require('../config');
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
@@ -39,7 +40,7 @@ export function logoutUser() {
 }
 
 export async function loginUser(creds) {
-  return await axios.post("http://localhost:3002/login",creds).then(function (response){
+  return await axios.post(apiurl+"login",creds).then(function (response){
     console.log(response);
     if(response.data.status==401){
       return response;

@@ -40,10 +40,10 @@ const Login = (props) => {
       }, 1000);
     }
     else if(reponse.data.status == 200){
-      const { from } = props.location.state || { from: { pathname: '/#/template/dashboard' }};
+      const { from } = props.location.state || { from: { pathname: '#/template/dashboard' }};
       if (hasToken(JSON.parse(localStorage.getItem('authenticated')))) {
         return (
-          window.location.href='/template'
+          window.location.href='#/template'
         )
       }
     }
