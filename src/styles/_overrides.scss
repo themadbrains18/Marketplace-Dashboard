@@ -486,7 +486,6 @@ input[type='checkbox'] .styled:checked + label::after {
 
 .nav-tabs {
   flex-wrap: nowrap;
-  overflow-x: auto;
 
   .nav-link {
     margin-bottom: -$nav-tabs-border-width;

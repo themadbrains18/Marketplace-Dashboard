@@ -9,7 +9,7 @@ const config = {
 }
 
 export async function getTools() {
-    return await axios.get(apiurl + "tool/getAll", config);
+    return await axios.get(apiurl + "tool/getAll");
 }
 
 export async function save(name ,admin){

@@ -333,6 +333,7 @@ img, svg{
     flex-wrap: wrap;
     margin-right: -15px;
     margin-left: -15px;
+    margin-bottom: 1rem;
 }
 @media (min-width: 768px){
 .text-md-right{
@@ -510,4 +511,8 @@ img, svg{
   img {
     margin-left: 16px;
   }
+}
+
+.tab-pane{
+  margin-top: 0.5rem;
 }

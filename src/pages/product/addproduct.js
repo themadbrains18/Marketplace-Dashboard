@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import {
     Col,
-    Row
+    Row,
+    TabContent, TabPane, Nav, NavItem, NavLink,
+    Card, Button, CardTitle, CardText, FormGroup, Label, Input, Form
 } from "reactstrap";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
-import { save, saveSlider, savePreview, saveDownloadFiles } from '../../actions/product';
+import { save, saveSlider, savePreview, saveDownloadFiles, saveHeroImage, saveThumbImage } from '../../actions/product';
 import { getCategory } from '../../actions/category';
 import { getSubCategory } from '../../actions/subcategory';
 import { getTools } from '../../actions/tools';
@@ -21,21 +23,19 @@ const Addproduct = () => {
     const [selectedSliderImage, setSelectedSliderImage] = useState([]);
     const [selectedPreviewImage, setselectedPreviewImage] = useState([]);
     const [showFormSection, setShowFormSection] = useState(true);
-    const [showSliderSection, setShowSliderSection] = useState(false);
-    const [showPreviewSection, setShowPreviewSection] = useState(false);
-    const [showDownloadFileSection, setShowDownloadFileSection] = useState(false);
-    
-
     const [selectedDownloadableFile, setSelectedDownloadableFile] = useState([]);
-    // Form field inputs values
-
     const [productId, setProductId] = useState(0);
     const [categoryArray, setCategoryArray] = useState([]);
     const [Subcategory, setSubCategoryData] = useState([]);
     const [Tools, setTools] = useState([]);
-    const [validateMessage, setValidateMessage] = useState('');
     const [alert, setAlert] = useState({});
     const [buttonDisable, setButtonDisable] = useState(false);
+    const [activeTab, setActiveTab] = useState('1');
+    const [tempId, setTempId] = useState(Math.random().toString(32).slice(2, 11));
+    const [selectedHeroImage, setSelectedHeroImage] = useState([]);
+    const [selectedThumbImage, setSelectedThumbImage] = useState([]);
+
+    const [checkedTools, setCheckedTools] = useState([]);
 
     const initialState = {
         category: "",
@@ -46,10 +46,13 @@ const Addproduct = () => {
         link: "",
         overview: "",
         highlight: "",
-        template:""
+        template: "",
+        fonts:"",
+        productstatus:""
     };
 
-    const [{ category, subcategory, tools, title, admin, link, overview, highlight,template }, setFormInputs] = useState([]);
+    const [{ category, subcategory, tools, title, admin, link, overview, highlight, template,fonts,
+    productstatus }, setFormInputs] = useState([]);
 
     // onLoad get master table data
     useEffect(() => {
@@ -103,54 +106,24 @@ const Addproduct = () => {
         }
     };
 
-    // upload slider files of product
-    let sliderUpload = (e) => {
-        let imageArray = [];
-        if (e.target.files && e.target.files.length > 0) {
-            for (let i = 0; i < e.target.files.length; i++) {
-                imageArray.push(e.target.files[i]);
-            }
-            setSelectedSliderImage(imageArray);
-            setFormInputs(prevState => ({ ...prevState, [e.target.name]: imageArray }));
-        }
-    };
-
-    // upload preview files of product
-    let previewUpload = (e) => {
-        let previewArray = [];
-
-        if (e.target.files && e.target.files.length > 0) {
-            for (let i = 0; i < e.target.files.length; i++) {
-                previewArray.push(e.target.files[i]);
-            }
-            setselectedPreviewImage(previewArray);
-            setFormInputs(prevState => ({ ...prevState, [e.target.name]: previewArray }));
-        }
-    }
-
     let handleOverviewChange = (e) => {
         setFormInputs(prevState => ({ ...prevState, 'overview': e }));
     }
 
-    let handleHighlightChange = (e) => {
-        setFormInputs(prevState => ({ ...prevState, 'highlight': e }));
-    }
+    // let handleHighlightChange = (e) => {
+    //     setFeatures(oldArray => [...oldArray, e.target.value]);
+    // }
 
-    // upload downloadable files of product
-    let downloadFileUpload = (e) => {
-        debugger;
-        let downloadFileArray = [];
-
-        if (e.target.files && e.target.files.length > 0) {
-            for (let i = 0; i < e.target.files.length; i++) {
-                downloadFileArray.push(e.target.files[i]);
-            }
-            setSelectedDownloadableFile(downloadFileArray);
-            setFormInputs(prevState => ({ ...prevState, [e.target.name]: downloadFileArray }));
+    let onChangeCompatibility = (e) => {
+        let existitem = checkedTools.filter(item => item == e.target.value);
+        if (existitem.length == 0) {
+            setCheckedTools(oldArray => [...oldArray, e.target.value]);
         }
+        else {
+            setCheckedTools(checkedTools.filter(item => item !== e.target.value));
+        }
+        setAlert({})
     }
-
-    // Start upload data into database
 
     let token = localStorage.getItem('access_token');
     const config = {
@@ -160,40 +133,68 @@ const Addproduct = () => {
         }
     }
 
+    // save product detail start
     let saveChanges = (e) => {
         e.preventDefault();
-        
+        console.log(checkedTools);
         if (category == undefined) {
-            setValidateMessage('Please select category');
-        } else if (subcategory == undefined) {
-            setValidateMessage('Please select subcategory');
-        } else if (tools == undefined) {
-            setValidateMessage('Please select tools');
-        } else if (title == undefined) {
-            setValidateMessage('Please enter title');
-        } else if (admin == undefined) {
-            setValidateMessage('Please enter admin name');
-        } else if (link == undefined) {
-            setValidateMessage('Please enter shareable link');
-        } else if (overview == undefined) {
-            setValidateMessage('Please enter product overview');
+            setAlert({ type: 'warning', message: 'Please select category' })
         }
-        else if (highlight == undefined) {
-            setValidateMessage('Please select product highlight');
+        else if (subcategory == undefined) {
+            setAlert({ type: 'warning', message: 'Please select subcategory' })
         }
-        else if (selectedImage == '') {
-            setValidateMessage('Please upload image');
+        else if (checkedTools.length == 0) {
+            setAlert({ type: 'warning', message: 'Please select Compatibility' })
+        }
+        else if (title == undefined) {
+            setAlert({ type: 'warning', message: 'Please enter title' })
+        }
+        else if (admin == undefined) {
+            setAlert({ type: 'warning', message: 'Please enter admin name' })
+        }
+        // else if (fonts == undefined) {
+        //     setAlert({ type: 'warning', message: 'Please enter font style' })
+        // } 
+        else if (productstatus == undefined) {
+            setAlert({ type: 'warning', message: 'Please select product status' })
+        }
+        else if (selectedImage == '' && selectedImage == undefined) {
+            setAlert({ type: 'warning', message: 'Please upload image' })
         }
         else {
             saveProduct();
         }
-
     }
 
     async function saveProduct() {
         setButtonDisable(true);
-        let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight,template }
-        let response = await save(formInputs, selectedImage, config);
+        let tools = '';
+        for (let i = 0; i < checkedTools.length; i++) {
+            if (tools == '') {
+                tools = checkedTools[i];
+            }
+            else {
+                tools += ',' + checkedTools[i];
+            }
+        }
+
+        var elements = document.getElementsByClassName("highlight");
+
+        let highlight='';
+        for(let j=0;j<elements.length;j++){
+            if(elements[j].value!='' && elements[j].value!=undefined){
+                if (highlight == '') {
+                    highlight = elements[j].value;
+                }
+                else {
+                    highlight += ',' + elements[j].value;
+                }
+            }
+        }
+
+        let formInputs = { category, subcategory, title, admin, link, overview, template, highlight, tools,fonts,
+            productstatus }
+        let response = await save(formInputs, selectedImage, config,tempId);
         if (response.data) {
             if (response.data.status == 401) {
                 setAlert({ type: 'warning', message: response.data.message })
@@ -206,14 +207,21 @@ const Addproduct = () => {
                 setAlert({ type: 'success', message: response.data.message })
                 setTimeout(() => {
                     setAlert({})
+                    setTempId(Math.random().toString(32).slice(2, 11));
+                    setCheckedTools([]);
                     setButtonDisable(false);
                     setProductId(response.data.productdata._id);
                     setFormInputs({ ...initialState });
                     setSelectedImage();
-                    setShowFormSection(false);
-                    setShowPreviewSection(false);
-                    setShowSliderSection(true);
-                    setShowDownloadFileSection(false);
+                    setSelectedSliderImage([]);
+                    setselectedPreviewImage([]);
+                    setSelectedDownloadableFile([]);
+                    setSelectedHeroImage([]);
+                    setSelectedThumbImage([]);
+                    var elements = document.getElementsByClassName("highlight");
+                    for(let j=0;j<elements.length;j++){
+                        elements[j].value='';
+                    }
                 }, 3000);
             }
             else {
@@ -222,118 +230,199 @@ const Addproduct = () => {
 
         }
     }
+    // save product detail end
 
-    let uploadSlider = (e) => {
-        e.preventDefault();
-        setButtonDisable(true);
-        if (selectedSliderImage == '') {
-            setValidateMessage('Please upload slider image');
+    // upload slider files of product start
+    let sliderUpload = (e) => {
+        let imageArray = [];
+        if (e.target.files && e.target.files.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                imageArray.push(e.target.files[i]);
+            }
+            setSelectedSliderImage(imageArray);
+            saveProductSlider(imageArray);
         }
-        else {
-            saveProductSlider();
+    };
+
+    // let uploadSlider = (e) => {
+    //     e.preventDefault();
+    //     setButtonDisable(true);
+    //     if (selectedSliderImage == '') {
+    //         setAlert({ type: 'warning', message: 'Please select product detail images' })
+    //     }
+    //     else {
+    //         saveProductSlider();
+    //     }
+
+    // }
+
+    async function saveProductSlider(imageArray) {
+        if (imageArray == '' && imageArray == null) {
+            setAlert({ type: 'warning', message: 'Please select product detail images' })
+            return;
         }
-
-    }
-
-    async function saveProductSlider() {
-        let response = await saveSlider(productId, selectedSliderImage, config);
+        console.log("Temp id generate : " + tempId);
+        let response = await saveSlider(tempId, imageArray, config);
         if (response.data) {
             if (response.data.status == 200) {
-                setAlert({ type: 'success', message: response.data.message })
                 setTimeout(() => {
-                    setButtonDisable(false);
                     setAlert({})
-                    setSelectedSliderImage([]);
-                    setShowFormSection(false);
-                    setShowSliderSection(false);
-                    setShowPreviewSection(true);
-                    setShowDownloadFileSection(false);
                 }, 3000);
             }
-            else{
+            else {
                 setButtonDisable(false);
             }
         }
     }
+    // upload slider files of product end
 
-    let uploadPreview = (e) => {
-        e.preventDefault();
-        setButtonDisable(true);
-        if (selectedPreviewImage == '') {
-            setValidateMessage('Please upload Preview image');
-        }
-        else {
-            saveProductPreview();
-        }
+    // upload preview files of product start
+    let previewUpload = (e) => {
+        let previewArray = [];
 
+        if (e.target.files && e.target.files.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                previewArray.push(e.target.files[i]);
+            }
+            setselectedPreviewImage(previewArray);
+            saveProductPreview(previewArray)
+        }
     }
 
-    async function saveProductPreview() {
-        let response = await savePreview(productId, selectedPreviewImage, config);
+    // let uploadPreview = (e) => {
+    //     e.preventDefault();
+    //     setButtonDisable(true);
+    //     if (selectedPreviewImage == '') {
+    //         setValidateMessage('Please upload Preview image');
+    //     }
+    //     else {
+    //         saveProductPreview();
+    //     }
+
+    // }
+
+    async function saveProductPreview(imageArray) {
+        if (imageArray == '' && imageArray == null) {
+            setAlert({ type: 'warning', message: 'Please select product detail images' })
+            return;
+        }
+        console.log("Temp id generate : " + tempId);
+        let response = await savePreview(tempId, imageArray, config);
         if (response.data) {
             if (response.data.status == 200) {
-                setAlert({ type: 'success', message: response.data.message })
                 setTimeout(() => {
-                    setButtonDisable(false);
                     setAlert({})
-                    setselectedPreviewImage([]);
-                    setShowSliderSection(false);
-                    setShowPreviewSection(false);
-                    setShowDownloadFileSection(true);
-                    setShowFormSection(false);
                 }, 3000);
             }
-            else{
+            else {
                 setButtonDisable(false);
             }
-
         }
-
     }
+    // upload preview files of product end
 
-
-    let uploadDownloadFile = (e) => {
-        e.preventDefault();
-        setButtonDisable(true);
-        if (selectedDownloadableFile == '') {
-            setValidateMessage('Please upload download file');
+    // Upload Hero file that show product banner start
+    let changeHeroImage = (e) => {
+        let heroArray = [];
+        if (e.target.files && e.target.files.length > 0) {
+            heroArray.push(e.target.files[0]);
+            setSelectedHeroImage(heroArray);
+            uploadHeroImage(heroArray);
         }
-        else {
-            saveDownloadFile();
-        }
+    };
 
+    async function uploadHeroImage(imageFile) {
+        console.log("Temp id generate : " + tempId);
+        let response = await saveHeroImage(tempId, imageFile, config);
+        console.log(response);
     }
+    // Upload Hero file that show product banner end
 
-    async function saveDownloadFile() {
+    // upload Thumb file that show in product card start
+    let changeThumbImage = (e) => {
+        let thumbArray = [];
+        if (e.target.files && e.target.files.length > 0) {
+            thumbArray.push(e.target.files[0]);
+            setSelectedThumbImage(thumbArray);
+            uploadThumbImage(thumbArray);
+        }
+    };
+
+    async function uploadThumbImage(imageFile) {
+
+        console.log("Temp id generate : " + tempId);
+        let response = await saveThumbImage(tempId, imageFile, config);
+        console.log(response);
+    }
+    // upload Thumb file that show in product card end
+
+
+    // upload downloadable files of product start
+    let downloadFileUpload = (e) => {
         debugger;
-        let response = await saveDownloadFiles('skilify',productId, selectedDownloadableFile, config);
+        let downloadFileArray = [];
+
+        if (e.target.files && e.target.files.length > 0) {
+            for (let i = 0; i < e.target.files.length; i++) {
+                downloadFileArray.push(e.target.files[i]);
+            }
+            setSelectedDownloadableFile(downloadFileArray);
+            saveDownloadFile(downloadFileArray)
+        }
+    }
+
+    // let uploadDownloadFile = (e) => {
+    //     e.preventDefault();
+    //     setButtonDisable(true);
+    //     if (selectedDownloadableFile == '') {
+    //         setAlert({ type: 'error', message: 'Please upload download file' });
+    //     }
+    //     else {
+    //         saveDownloadFile();
+    //     }
+    // }
+
+    async function saveDownloadFile(downloadFileArray) {
+        console.log("Temp id generate : " + tempId);
+        let response = await saveDownloadFiles('file', tempId, downloadFileArray, config);
         if (response.data) {
             if (response.data.status == 200) {
                 setAlert({ type: 'success', message: response.data.message })
                 setTimeout(() => {
                     setButtonDisable(false);
                     setAlert({})
-                    setSelectedDownloadableFile([]);
-                    setShowSliderSection(false);
-                    setShowPreviewSection(false);
-                    setShowDownloadFileSection(false);
-                    setShowFormSection(true);
                     setProductId(0)
                 }, 3000);
             }
-            else{
+            else {
                 setButtonDisable(false);
             }
-
         }
-
     }
-
-    // End upload data into database
+    // upload downloadable files of product end
 
     // Redirect to product list page
     const redirectProduct = () => {
-        window.location.href = '/#/template/product';
+        window.location.href = '#/template/product';
+    }
+
+    // tabs toggle 
+    const toggle = (tab) => {
+        if (activeTab != tab) {
+            setActiveTab(tab);
+        }
+    }
+
+    const renderCheckbox = (val, index) => {
+        if (checkedTools.filter(item => item == val._id).length > 0) {
+            return <><Input type="checkbox" id={'checkbox' + (index + 1)} checked={true} value={val._id} onChange={(event) => onChangeCompatibility(event)} />
+                <Label htmlFor={'checkbox' + (index + 1)}>{val.name}</Label><br /></>
+        }
+        else {
+            return <><Input type="checkbox" id={'checkbox' + (index + 1)} value={val._id} onChange={(event) => onChangeCompatibility(event)} />
+                <Label htmlFor={'checkbox' + (index + 1)}>{val.name}</Label><br /></>
+        }
+
     }
 
     return (
@@ -341,279 +430,425 @@ const Addproduct = () => {
             <Row>
                 <Col className="pr-grid-col" xs={12} lg={12}>
                     <AlertNotification alert={alert} />
-                    <Row className="gutter mb-4">
-                        <Col xs={12}>
-                            <div className="gutter mb-4 row">
-                                <div className="col-12 col-lg-9" style={{ display: showFormSection == true ? 'block' : 'none', margin: 'auto' }}>
-                                    <section className="Widget_widget__16nWC">
-                                        <div className="widget-p-md">
-                                            <div className="form-group">
-                                                <form className="">
-                                                    <div className={s.tableTitle}>
-                                                        <div className="headline-2">Basic Information</div>
-                                                        <div className="d-flex">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" onClick={(event) => redirectProduct(event)}>Prodcut View</button>
-                                                        </div>
-                                                    </div>
+                    <Row>
+                        <Col xs={12} lg={12}>
+                            <div className={s.tableTitle}>
+                                <div className="headline-2"></div>
+                                <div className="d-flex">
+                                    <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Save Changes</button>
+                                    <button className="mt-3 btn btn-default" onClick={(event) => { setFormInputs([]); redirectProduct(event) }}>Cancel</button>
+                                </div>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} lg={12}>
+                            <Nav tabs>
+                                <NavItem>
+                                    <NavLink
+                                        className={activeTab == '1' ? 'active' : ''}
+                                        onClick={() => toggle('1')}
+                                    >
+                                        General
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem>
+                                    <NavLink
+                                        className={activeTab == '2' ? 'active' : ''}
+                                        onClick={() => toggle('2')}
+                                    >
+                                        Images
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem>
+                                    <NavLink
+                                        className={activeTab == '3' ? 'active' : ''}
+                                        onClick={() => toggle('3')}
+                                    >
+                                        Files
+                                    </NavLink>
+                                </NavItem>
+                            </Nav>
+                            <TabContent activeTab={activeTab}>
+                                <TabPane tabId="1">
+                                    <Row>
+                                        <Col sm="8">
+                                            <div className="col-12 col-lg-12" style={{ display: showFormSection == true ? 'block' : 'none' }}>
+                                                <section className="Widget_widget__16nWC">
+                                                    <div className="widget-p-md">
+                                                        <div className="form-group">
+                                                            <Form className="">
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fieldName">Name<span style={{ color: 'red' }}>*</span></Label>
+                                                                            <Input name="title" value={title} id="fieldName" placeholder="Title" type="text" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
 
-                                                    <div className="row form-group">
-                                                        <label htmlFor="default-select" className="text-md-right col-md-4 col-form-label">Category</label>
-                                                        <div className="col-md-8">
-                                                            <div className=" css-2b097c-container">
-                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
-                                                                <select name="category" id="category" value={category} className="css-yk16xz-control form-select" style={{ width: '100%' }} onChange={(event) => filterSubcategory(event)} aria-label="Default select example">
-                                                                    <option selected>Select Category</option>
-                                                                    {categoryArray.map((val, index) => {
-                                                                        return <option value={val._id}>{val.name}</option>
-                                                                    })}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="grouped-select" className="text-md-right col-md-4 col-form-label">Subcategory</label>
-                                                        <div className="col-md-8">
-                                                            <div className=" css-2b097c-container">
-                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
-                                                                <select name="subcategory" value={subcategory} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
-                                                                    <option selected>Select Subcategory</option>
-                                                                    {subCategoryArray.map((val, index) => {
-                                                                        return <option value={val._id}>{val.name}</option>
-                                                                    })}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="grouped-select" className="text-md-right col-md-4 col-form-label">Tools</label>
-                                                        <div className="col-md-8">
-                                                            <div className=" css-2b097c-container">
-                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
-                                                                <select name="tools" value={tools} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
-                                                                    <option selected>Select Tools</option>
-                                                                    {Tools.map((val, index) => {
-                                                                        return <option value={val._id}>{val.name}</option>
-                                                                    })}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="grouped-select" className="text-md-right col-md-4 col-form-label">Template Type</label>
-                                                        <div className="col-md-8">
-                                                            <div className=" css-2b097c-container">
-                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
-                                                                <select name="template" value={template} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
-                                                                    <option selected>Select Template</option>
-                                                                    <option value="web">Website</option>
-                                                                    <option value="mob">Mobile</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="normal-field" className="text-md-right col-md-4 col-form-label">Title</label>
-                                                        <div className="col-md-8">
-                                                            <input name="title" value={title} id="normal-field" placeholder="Title" type="text" className="form-control" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))} />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="by-field" className="text-md-right col-md-4 col-form-label">By</label>
-                                                        <div className="col-md-8">
-                                                            <input name="admin" value={admin} id="by-field" placeholder="Admin Name" type="text" className="form-control" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))} />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="link-field" className="text-md-right col-md-4 col-form-label">Shareable Link</label>
-                                                        <div className="col-md-8">
-                                                            <input name="link" value={link} id="link-field" placeholder="link" type="text" className="form-control" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))} />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="hint-field" className="d-flex flex-column text-md-right col-md-4 col-form-label">Overview<span className="label muted">Some help text</span></label>
-                                                        <div className="col-md-8">
-                                                            <SunEditor id='overview' setContents={overview} name="overview" placeholder="Add Overview Here.." onChange={(e) => handleOverviewChange(e)} setOptions={{
-                                                                height: 200,
-                                                                buttonList: [
-                                                                    ['undo', 'redo'],
-                                                                    ['font', 'fontSize', 'formatBlock'],
-                                                                    ['paragraphStyle', 'blockquote'],
-                                                                    ['bold', 'underline', 'italic', 'strike'],
-                                                                    ['fontColor', 'hiliteColor', 'textStyle'],
-                                                                    ['removeFormat'],
-                                                                    ['outdent', 'indent'],
-                                                                    ['align', 'horizontalRule', 'list', 'lineHeight'],
-                                                                    ['table', 'link', 'image'],
-                                                                    ['fullScreen'],
-                                                                    ['preview', 'print'],
-                                                                ]
-                                                            }} />
-                                                        </div>
-                                                    </div>
-                                                    <div className="row form-group">
-                                                        <label htmlFor="tooltip-enabled" className="text-md-right col-md-4 col-form-label">Highlight</label>
-                                                        <div className="col-md-8">
-                                                            <SunEditor id='highlight' setContents={highlight} name="highlight" placeholder="Add Highlights Here.." onChange={(e) => handleHighlightChange(e)} setOptions={{
-                                                                height: 200,
-                                                                buttonList: [
-                                                                    ['undo', 'redo'],
-                                                                    ['font', 'fontSize', 'formatBlock'],
-                                                                    ['paragraphStyle', 'blockquote'],
-                                                                    ['bold', 'underline', 'italic', 'strike'],
-                                                                    ['fontColor', 'hiliteColor', 'textStyle'],
-                                                                    ['removeFormat'],
-                                                                    ['outdent', 'indent'],
-                                                                    ['align', 'horizontalRule', 'list', 'lineHeight'],
-                                                                    ['table', 'link', 'image'],
-                                                                    ['fullScreen'],
-                                                                    ['preview', 'print'],
-                                                                ]
-                                                            }} />
-                                                        </div>
-                                                    </div>
+                                                                    </Col>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fieldAuther">Created By<span style={{ color: 'red' }}>*</span></Label>
+                                                                            <Input name="admin" value={admin} id="fieldAuther" placeholder="Admin Name" type="text" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="exampleCategory">Category<span style={{ color: 'red' }}>*</span></Label>
+                                                                            <select name="category" id="exampleCategory" value={category} className="css-yk16xz-control form-select" style={{ width: '100%' }} onChange={(event) => { filterSubcategory(event); setAlert({}) }} aria-label="Default select example">
+                                                                                <option selected>Select Category</option>
+                                                                                {categoryArray.map((val, index) => {
+                                                                                    return <option value={val._id}>{val.name}</option>
+                                                                                })}
+                                                                            </select>
+                                                                        </FormGroup>
 
-                                                    {/* single File upload start */}
-                                                    <div className="row form-group">
-                                                        <label className="text-md-right mt-3 col-lg-4 col-form-label">List File Upload</label>
-                                                        <div className="col-lg-8">
-                                                            <div className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
-                                                                <input id="upload" name="listImage" type="file" onChange={(e) => imageChange(e)} className="form-control border-0 Elements_upload__3DkRJ" />
-                                                                <label id="upload-label" htmlFor="upload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
-                                                                <div className="input-group-append">
-                                                                    <label htmlFor="upload" className="btn btn-light m-0 rounded-pill px-4"><i className="fa fa-cloud-upload mr-2 text-muted"></i></label>
+                                                                    </Col>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fieldSubcategory">Subcategory<span style={{ color: 'red' }}>*</span></Label>
+                                                                            <select name="subcategory" id="fieldSubcategory" value={subcategory} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => { setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({}) }}>
+                                                                                <option selected>Select Subcategory</option>
+                                                                                {subCategoryArray.map((val, index) => {
+                                                                                    return <option value={val._id}>{val.name}</option>
+                                                                                })}
+                                                                            </select>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="exampleTemplate">Template Type<span style={{ color: 'red' }}>*</span></Label>
+                                                                            <select name="template" id="exampleTemplate" value={template} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}}>
+                                                                                <option selected>Select Template</option>
+                                                                                <option value="web">Website</option>
+                                                                                <option value="mob">Mobile</option>
+                                                                            </select>
+                                                                        </FormGroup>
+
+                                                                    </Col>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fieldlink">Shareable Link</Label>
+                                                                            <Input name="link" value={link} id="link-field" placeholder="link" type="text" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fieldFonts">Fonts</Label>
+                                                                            <Input name="fonts" value={fonts} id="fieldFonts" placeholder="Title" type="text" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+
+                                                                    </Col>
+                                                                    
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="12">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fielddescription">Description</Label>
+                                                                            <SunEditor id='fielddescription' setContents={overview} name="overview" placeholder="Add Overview Here.." onChange={(e) => handleOverviewChange(e)} setOptions={{
+                                                                                height: 200,
+                                                                                buttonList: [
+                                                                                    ['undo', 'redo'],
+                                                                                    ['font', 'fontSize', 'formatBlock'],
+                                                                                    ['paragraphStyle', 'blockquote'],
+                                                                                    ['bold', 'underline', 'italic', 'strike'],
+                                                                                    ['fontColor', 'hiliteColor', 'textStyle'],
+                                                                                    ['removeFormat'],
+                                                                                    ['outdent', 'indent'],
+                                                                                    ['align', 'horizontalRule', 'list', 'lineHeight'],
+                                                                                    ['table', 'link', 'image'],
+                                                                                    ['fullScreen'],
+                                                                                    ['preview', 'print'],
+                                                                                ]
+                                                                            }} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="12">
+                                                                        <CardTitle>Features and Compatibility</CardTitle>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="exampleTemplate">Features</Label>
+                                                                            <Row>
+                                                                                <Col sm="12">
+                                                                                    <Input type="text" name={highlight} className="form-control highlight"  onChange={( ) => { setAlert({})}} />
+                                                                                </Col>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Col sm="12">
+                                                                                    <Input type="text" name={highlight} className="form-control highlight"  onChange={( ) => {setAlert({})}} />
+                                                                                </Col>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Col sm="12">
+                                                                                    <Input type="text" name={highlight} className="form-control highlight" onChange={( ) => {setAlert({})}} />
+                                                                                </Col>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Col sm="12">
+                                                                                    <Input type="text" name={highlight} className="form-control highlight"  onChange={( ) => { setAlert({})}} />
+                                                                                </Col>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Col sm="12">
+                                                                                    <Input type="text" name={highlight} className="form-control highlight"  onChange={( ) => { setAlert({})}} />
+                                                                                </Col>
+                                                                            </Row>
+                                                                            <Row>
+                                                                                <Col sm="12">
+                                                                                    <Input type="text" name={highlight} className="form-control highlight"  onChange={( ) => { setAlert({})}} />
+                                                                                </Col>
+                                                                            </Row>
+
+                                                                        </FormGroup>
+
+                                                                    </Col>
+                                                                    <Col sm="6">
+                                                                        <FormGroup>
+                                                                            <Label htmlFor="fieldlink">Compatibility<span style={{ color: 'red' }}>*</span></Label>
+                                                                            {/* <select name="tools" value={tools} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
+                                                                                <option selected>Select Tools</option>
+                                                                                {Tools.map((val, index) => {
+                                                                                    return <option value={val._id}>{val.name}</option>
+                                                                                })}
+                                                                            </select> */}
+                                                                            <Row>
+                                                                                <Col sm="11" style={{ margin: 'auto' }}>
+                                                                                    {Tools.map((val, index) => {
+                                                                                        { return renderCheckbox(val, index) }
+                                                                                    })}
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+
+                                                                {/* <div className="row form-group">
+                                                                    <label htmlFor="tooltip-enabled" className="text-md-right col-md-4 col-form-label">Highlight</label>
+                                                                    <div className="col-md-8">
+                                                                        <SunEditor id='highlight' setContents={highlight} name="highlight" placeholder="Add Highlights Here.." onChange={(e) => handleHighlightChange(e)} setOptions={{
+                                                                            height: 200,
+                                                                            buttonList: [
+                                                                                ['undo', 'redo'],
+                                                                                ['font', 'fontSize', 'formatBlock'],
+                                                                                ['paragraphStyle', 'blockquote'],
+                                                                                ['bold', 'underline', 'italic', 'strike'],
+                                                                                ['fontColor', 'hiliteColor', 'textStyle'],
+                                                                                ['removeFormat'],
+                                                                                ['outdent', 'indent'],
+                                                                                ['align', 'horizontalRule', 'list', 'lineHeight'],
+                                                                                ['table', 'link', 'image'],
+                                                                                ['fullScreen'],
+                                                                                ['preview', 'print'],
+                                                                            ]
+                                                                        }} />
+                                                                    </div>
+                                                                </div> */}
+
+                                                            </Form>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                        </Col>
+                                        <Col sm="4">
+                                            <Row>
+                                                <Col>
+                                                    <Card body>
+                                                        <CardTitle>Status<span style={{ color: 'red' }}>*</span></CardTitle>
+                                                        <div className="col-md-12">
+                                                            <div className=" css-2b097c-container">
+                                                                <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="css-7pg0cj-a11yText"></span>
+                                                                <select name="productstatus" id="exampleStatus" value={productstatus} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}}>
+                                                                    <option selected>Select Status</option>
+                                                                    <option value="dev">Devlopment</option>
+                                                                    <option value="prev">Preview Mode</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </Card>
+                                                </Col>
+                                            </Row>
+
+                                            <Row>
+                                                <Col>
+                                                    <Card body>
+                                                        <CardTitle>Product Card Image<span style={{ color: 'red' }}>*</span></CardTitle>
+                                                        <div className="row form-group">
+                                                            <div className="col-lg-12">
+                                                                <div className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                                    <input id="upload" name="listImage" type="file" onChange={(e) => imageChange(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                                    <label id="upload-label" htmlFor="upload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                                    <div className="input-group-append">
+                                                                        <label htmlFor="upload" className="btn btn-light m-0 rounded-pill px-4"><i className="fa fa-cloud-upload mr-2 text-muted"></i></label>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="mt-2 Elements_imageArea__1uoYY">
+                                                                    {selectedImage && (
+                                                                        <img id="imageResult" src={URL.createObjectURL(selectedImage)} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
+                                                                    )}
                                                                 </div>
                                                             </div>
-                                                            <div className="label muted text-center mb-2">The image uploaded will be rendered inside the box below.</div>
-                                                            <div className="mt-2 Elements_imageArea__1uoYY">
-                                                                {selectedImage && (
-                                                                    <img id="imageResult" src={URL.createObjectURL(selectedImage)} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
-                                                                )}
-                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    {/* single File upload end */}
+                                                    </Card>
+                                                </Col>
+                                            </Row>
 
-                                                    <div className="row form-group">
-                                                        <label className="col-md-5 col-form-label"></label>
-                                                        <div className="col-md-7">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == false ? saveChanges(event) : ''}>Save Changes</button>
-                                                            <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row">
-                                                        <div className="headline-4 col-lg-12" style={{ color: 'red', textAlign: 'center', paddingBottom: '15px' }}>{validateMessage}</div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </section>
-                                </div>
-                                <div className="mt-4 mt-md-0 col-12 col-lg-9" style={{ display: showSliderSection == true ? 'block' : 'none', margin: 'auto' }}>
-                                    <section className="Widget_widget__16nWC">
-                                        <div className="widget-p-md">
-                                            <form className="">
-                                                <div className="headline-2">Slider File Upload </div>
-                                                <div className="form-group">
-                                                    {/* Multi File upload start */}
-                                                    <div className="row form-group">
-                                                        <label className="text-md-right mt-3 col-lg-3 col-form-label">Silder Files Upload</label>
-                                                        <div className="col-lg-9">
-                                                            <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
-                                                                <input id="previewupload" name="sliderImage" multiple type="file" accept='image/*' onChange={(e) => sliderUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
-                                                                <label id="previewupload-label" htmlFor="previewupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose files</label>
-                                                            </div>
-                                                            <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div>
-                                                            <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
-                                                                {selectedSliderImage.map((val, index) => {
-                                                                    return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {/* Multi File upload end */}
 
-                                                    <div className="row form-group">
-                                                        <label className="col-md-5 col-form-label"></label>
-                                                        <div className="col-md-7">
-                                                            <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == true ?'':uploadSlider(event)}>Upload Slider</button>
-                                                            <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </section>
-                                </div>
-
-                                <div className="mt-4 mt-md-0 col-12 col-lg-9" style={{ display: showPreviewSection == true ? 'block' : 'none', margin: 'auto' }}>
-                                    <section className="Widget_widget__16nWC">
-                                        <div className="widget-p-md">
-                                            <div className="headline-2">Preview File Upload </div>
-                                            <div className="form-group">
-                                                {/* Multi Preview File upload start */}
+                                        </Col>
+                                    </Row>
+                                </TabPane>
+                                <TabPane tabId="2">
+                                    <Row>
+                                        <Col sm="6">
+                                            <Card body>
+                                                <CardTitle>Hero Image</CardTitle>
                                                 <div className="row form-group">
-                                                    <label className="text-md-right mt-3 col-lg-4 col-form-label">Preview Files Upload</label>
-                                                    <div className="col-lg-8">
-                                                        <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
-                                                            <input id="multiupload" name="previewImage" multiple type="file" onChange={(e) => previewUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
-                                                            <label id="multiupload-label" htmlFor="multiupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose files</label>
+                                                    <div className="col-lg-12">
+                                                        <div className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                            <input id="upload" name="listImage" type="file" onChange={(e) => changeHeroImage(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                            <label id="upload-label" htmlFor="upload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                            <div className="input-group-append">
+                                                                <label htmlFor="upload" className="btn btn-light m-0 rounded-pill px-4"><i className="fa fa-cloud-upload mr-2 text-muted"></i></label>
+                                                            </div>
                                                         </div>
-                                                        <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div>
-                                                        <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
-                                                            {selectedPreviewImage.map((val, index) => {
-                                                                return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
+                                                        <div className="mt-2 Elements_imageArea__1uoYY">
+                                                            {selectedHeroImage.map((val, index) => {
+                                                                return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
                                                             })}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* Multi Preview File upload end */}
+                                            </Card>
+                                        </Col>
+                                        <Col sm="6">
+                                            <Card body>
+                                                <CardTitle>Thumbs image<span style={{ color: 'red' }}>*</span></CardTitle>
                                                 <div className="row form-group">
-                                                    <label className="col-md-5 col-form-label"></label>
-                                                    <div className="col-md-7">
-                                                        <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == true ?'':uploadPreview(event)}>Upload Preview</button>
-                                                        <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-                                </div>
-
-                                <div className="mt-4 mt-md-0 col-12 col-lg-9" style={{ display: showDownloadFileSection == true ? 'block' : 'none', margin: 'auto' }}>
-                                    <section className="Widget_widget__16nWC">
-                                        <div className="widget-p-md">
-                                            <div className="headline-2">Downloadable File Upload </div>
-                                            <div className="form-group">
-                                                {/* Multi Preview File upload start */}
-                                                <div className="row form-group">
-                                                    <label className="text-md-right mt-3 col-lg-4 col-form-label">Preview Files Upload</label>
-                                                    <div className="col-lg-8">
-                                                        <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
-                                                            <input id="multiupload" name="downloadFile" type="file" onChange={(e) => downloadFileUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
-                                                            <label id="multiupload-label" htmlFor="multiupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                    <div className="col-lg-12">
+                                                        <div className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                            <input id="upload" name="listImage" type="file" onChange={(e) => changeThumbImage(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                            <label id="upload-label" htmlFor="upload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                            <div className="input-group-append">
+                                                                <label htmlFor="upload" className="btn btn-light m-0 rounded-pill px-4"><i className="fa fa-cloud-upload mr-2 text-muted"></i></label>
+                                                            </div>
                                                         </div>
-                                                        <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div>
-                                                        <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
-                                                            {selectedDownloadableFile.map((val, index) => {
-                                                                return  <label className="col-md-5 col-form-label">{val.name}</label>
+                                                        <div className="mt-2 Elements_imageArea__1uoYY">
+                                                            {selectedThumbImage.map((val, index) => {
+                                                                return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
                                                             })}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* Multi Preview File upload end */}
-                                                <div className="row form-group">
-                                                    <label className="col-md-5 col-form-label"></label>
-                                                    <div className="col-md-7">
-                                                        <button type="submit" className="mr-3 mt-3 btn btn-primary" style={{ cursor: buttonDisable == true ? 'not-allowed' : '', pointerEvents: buttonDisable == true ? 'none' : '', opacity: buttonDisable == true ? 0.2 : 1 }} onClick={(event) => buttonDisable == true ?'': uploadDownloadFile(event)}>Upload Preview</button>
-                                                        <button className="mt-3 btn btn-default" onClick={() => setFormInputs([])}>Cancel</button>
-                                                    </div>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col sm="6">
+                                            <Card body>
+                                                <CardTitle>Detail Images</CardTitle>
+                                                <div className="mt-4 mt-md-0 col-12 col-lg-12">
+                                                    <section className="Widget_widget__16nWC">
+                                                        <div className="widget-p-md">
+                                                            <form className="">
+                                                                <div className="form-group">
+                                                                    {/* Multi File upload start */}
+                                                                    <div className="row form-group">
+                                                                        <div className="col-lg-12">
+                                                                            <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                                                <input id="previewupload" name="sliderImage" multiple type="file" accept='image/*' onChange={(e) => sliderUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                                                <label id="previewupload-label" htmlFor="previewupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose files</label>
+                                                                            </div>
+                                                                            {/* <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div> */}
+                                                                            <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
+                                                                                {selectedSliderImage.map((val, index) => {
+                                                                                    return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="multi-img-fluid rounded shadow-sm mx-auto d-block" />
+                                                                                })}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    {/* Multi File upload end */}
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </section>
                                                 </div>
+                                            </Card>
+                                        </Col>
+                                        <Col sm="6">
+                                            <Card body>
+                                                <CardTitle>Full Preview Images</CardTitle>
+                                                <div className="mt-4 mt-md-0 col-12 col-lg-12">
+                                                    <section className="Widget_widget__16nWC">
+                                                        <div className="widget-p-md">
+                                                            <div className="form-group">
+                                                                {/* Multi Preview File upload start */}
+                                                                <div className="row form-group">
+                                                                    <div className="col-lg-12">
+                                                                        <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                                            <input id="multiupload" name="previewImage" multiple type="file" onChange={(e) => previewUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                                            <label id="multiupload-label" htmlFor="multiupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose files</label>
+                                                                        </div>
+                                                                        {/* <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div> */}
+                                                                        <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
+                                                                            {selectedPreviewImage.map((val, index) => {
+                                                                                return <img id={"imageResult" + index} src={URL.createObjectURL(val)} alt="" className="img-fluid rounded shadow-sm mx-auto d-block" />
+                                                                            })}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                </TabPane>
+                                <TabPane tabId="3">
+                                    <Row>
+                                        <Col sm="8">
+                                        <Card body>
+                                                <CardTitle>Source File Upload</CardTitle>
+                                                <div className="mt-4 mt-md-0 col-12 col-lg-12">
+                                                <section className="Widget_widget__16nWC">
+                                                    <div className="widget-p-md">
+                                                        <div className="form-group">
+                                                            <div className="row form-group">
+                                                                <div className="col-lg-12">
+                                                                    <div tabindex="0" className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
+                                                                        <input id="multiupload" name="downloadFile" type="file" onChange={(e) => downloadFileUpload(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                                        <label id="multiupload-label" htmlFor="multiupload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
+                                                                    </div>
+                                                                    {/* <div className="label muted text-center mb-2">The images uploaded will be rendered inside the box below.</div> */}
+                                                                    <div className="mt-2 Elements_imageArea__1uoYY" style={{ height: '500px', overflow: 'auto' }}>
+                                                                        {selectedDownloadableFile.map((val, index) => {
+                                                                            return <label className="col-md-5 col-form-label">{val.name}</label>
+                                                                        })}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </section>
                                             </div>
-                                        </div>
-                                    </section>
-                                </div>
-
-                            </div>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                </TabPane>
+                            </TabContent>
                         </Col>
                     </Row>
                 </Col>
