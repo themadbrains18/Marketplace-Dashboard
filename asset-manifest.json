@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/Marketplace-Dashboard/static/css/main.7f690aaf.chunk.css",
-    "main.js": "/Marketplace-Dashboard/static/js/main.526d13a7.chunk.js",
-    "main.js.map": "/Marketplace-Dashboard/static/js/main.526d13a7.chunk.js.map",
+    "main.css": "/Marketplace-Dashboard/static/css/main.e4966fa0.chunk.css",
+    "main.js": "/Marketplace-Dashboard/static/js/main.bbedef7a.chunk.js",
+    "main.js.map": "/Marketplace-Dashboard/static/js/main.bbedef7a.chunk.js.map",
     "runtime-main.js": "/Marketplace-Dashboard/static/js/runtime-main.4b9cf069.js",
     "runtime-main.js.map": "/Marketplace-Dashboard/static/js/runtime-main.4b9cf069.js.map",
     "static/css/2.b1d900dc.chunk.css": "/Marketplace-Dashboard/static/css/2.b1d900dc.chunk.css",
-    "static/js/2.95e825e4.chunk.js": "/Marketplace-Dashboard/static/js/2.95e825e4.chunk.js",
-    "static/js/2.95e825e4.chunk.js.map": "/Marketplace-Dashboard/static/js/2.95e825e4.chunk.js.map",
+    "static/js/2.3ef2b78e.chunk.js": "/Marketplace-Dashboard/static/js/2.3ef2b78e.chunk.js",
+    "static/js/2.3ef2b78e.chunk.js.map": "/Marketplace-Dashboard/static/js/2.3ef2b78e.chunk.js.map",
     "index.html": "/Marketplace-Dashboard/index.html",
     "static/css/2.b1d900dc.chunk.css.map": "/Marketplace-Dashboard/static/css/2.b1d900dc.chunk.css.map",
-    "static/css/main.7f690aaf.chunk.css.map": "/Marketplace-Dashboard/static/css/main.7f690aaf.chunk.css.map",
-    "static/js/2.95e825e4.chunk.js.LICENSE.txt": "/Marketplace-Dashboard/static/js/2.95e825e4.chunk.js.LICENSE.txt",
+    "static/css/main.e4966fa0.chunk.css.map": "/Marketplace-Dashboard/static/css/main.e4966fa0.chunk.css.map",
+    "static/js/2.3ef2b78e.chunk.js.LICENSE.txt": "/Marketplace-Dashboard/static/js/2.3ef2b78e.chunk.js.LICENSE.txt",
     "static/media/app.scss": "/Marketplace-Dashboard/static/media/la-solid-900.a8130346.svg",
     "static/media/bagIcon.02c2eab2.svg": "/Marketplace-Dashboard/static/media/bagIcon.02c2eab2.svg",
     "static/media/basketIcon.4df1a1f6.svg": "/Marketplace-Dashboard/static/media/basketIcon.4df1a1f6.svg",
@@ -48,8 +48,8 @@
   "entrypoints": [
     "static/js/runtime-main.4b9cf069.js",
     "static/css/2.b1d900dc.chunk.css",
-    "static/js/2.95e825e4.chunk.js",
-    "static/css/main.7f690aaf.chunk.css",
-    "static/js/main.526d13a7.chunk.js"
+    "static/js/2.3ef2b78e.chunk.js",
+    "static/css/main.e4966fa0.chunk.css",
+    "static/js/main.bbedef7a.chunk.js"
   ]
 }
