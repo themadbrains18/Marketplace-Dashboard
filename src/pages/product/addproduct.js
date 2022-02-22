@@ -48,11 +48,13 @@ const Addproduct = () => {
         highlight: "",
         template: "",
         fonts:"",
-        productstatus:""
+        productstatus:"",
+        seodescription:"",
+        seokeywords:""
     };
 
     const [{ category, subcategory, tools, title, admin, link, overview, highlight, template,fonts,
-    productstatus }, setFormInputs] = useState([]);
+    productstatus,seodescription,seokeywords }, setFormInputs] = useState([]);
 
     // onLoad get master table data
     useEffect(() => {
@@ -97,9 +99,9 @@ const Addproduct = () => {
         let SubcategoryArray = Subcategory.filter(item => item.category._id == event.target.value);
         setSubcategoryArray(SubcategoryArray);
     }
-
     // upload file that show in list of product
     let imageChange = (e) => {
+        setAlert({});
         if (e.target.files && e.target.files.length > 0) {
             setSelectedImage(e.target.files[0]);
             setFormInputs(prevState => ({ ...prevState, [e.target.name]: e.target.files[0].name }));
@@ -109,10 +111,6 @@ const Addproduct = () => {
     let handleOverviewChange = (e) => {
         setFormInputs(prevState => ({ ...prevState, 'overview': e }));
     }
-
-    // let handleHighlightChange = (e) => {
-    //     setFeatures(oldArray => [...oldArray, e.target.value]);
-    // }
 
     let onChangeCompatibility = (e) => {
         let existitem = checkedTools.filter(item => item == e.target.value);
@@ -132,7 +130,6 @@ const Addproduct = () => {
             'Authorization': 'Bearer ' + token
         }
     }
-
     // save product detail start
     let saveChanges = (e) => {
         e.preventDefault();
@@ -177,9 +174,7 @@ const Addproduct = () => {
                 tools += ',' + checkedTools[i];
             }
         }
-
         var elements = document.getElementsByClassName("highlight");
-
         let highlight='';
         for(let j=0;j<elements.length;j++){
             if(elements[j].value!='' && elements[j].value!=undefined){
@@ -191,9 +186,8 @@ const Addproduct = () => {
                 }
             }
         }
-
         let formInputs = { category, subcategory, title, admin, link, overview, template, highlight, tools,fonts,
-            productstatus }
+            productstatus,seodescription,seokeywords }
         let response = await save(formInputs, selectedImage, config,tempId);
         if (response.data) {
             if (response.data.status == 401) {
@@ -227,11 +221,9 @@ const Addproduct = () => {
             else {
                 setAlert({ type: 'error', message: response })
             }
-
         }
     }
     // save product detail end
-
     // upload slider files of product start
     let sliderUpload = (e) => {
         let imageArray = [];
@@ -243,19 +235,6 @@ const Addproduct = () => {
             saveProductSlider(imageArray);
         }
     };
-
-    // let uploadSlider = (e) => {
-    //     e.preventDefault();
-    //     setButtonDisable(true);
-    //     if (selectedSliderImage == '') {
-    //         setAlert({ type: 'warning', message: 'Please select product detail images' })
-    //     }
-    //     else {
-    //         saveProductSlider();
-    //     }
-
-    // }
-
     async function saveProductSlider(imageArray) {
         if (imageArray == '' && imageArray == null) {
             setAlert({ type: 'warning', message: 'Please select product detail images' })
@@ -288,18 +267,6 @@ const Addproduct = () => {
             saveProductPreview(previewArray)
         }
     }
-
-    // let uploadPreview = (e) => {
-    //     e.preventDefault();
-    //     setButtonDisable(true);
-    //     if (selectedPreviewImage == '') {
-    //         setValidateMessage('Please upload Preview image');
-    //     }
-    //     else {
-    //         saveProductPreview();
-    //     }
-
-    // }
 
     async function saveProductPreview(imageArray) {
         if (imageArray == '' && imageArray == null) {
@@ -371,17 +338,6 @@ const Addproduct = () => {
         }
     }
 
-    // let uploadDownloadFile = (e) => {
-    //     e.preventDefault();
-    //     setButtonDisable(true);
-    //     if (selectedDownloadableFile == '') {
-    //         setAlert({ type: 'error', message: 'Please upload download file' });
-    //     }
-    //     else {
-    //         saveDownloadFile();
-    //     }
-    // }
-
     async function saveDownloadFile(downloadFileArray) {
         console.log("Temp id generate : " + tempId);
         let response = await saveDownloadFiles('file', tempId, downloadFileArray, config);
@@ -422,7 +378,6 @@ const Addproduct = () => {
             return <><Input type="checkbox" id={'checkbox' + (index + 1)} value={val._id} onChange={(event) => onChangeCompatibility(event)} />
                 <Label htmlFor={'checkbox' + (index + 1)}>{val.name}</Label><br /></>
         }
-
     }
 
     return (
@@ -478,6 +433,12 @@ const Addproduct = () => {
                                                     <div className="widget-p-md">
                                                         <div className="form-group">
                                                             <Form className="">
+                                                                <Row>
+                                                                    <Col sm="12">
+                                                                        <CardTitle>Product Detail</CardTitle>
+                                                                        <hr></hr>
+                                                                    </Col>
+                                                                </Row>
                                                                 <Row>
                                                                     <Col sm="6">
                                                                         <FormGroup>
@@ -573,7 +534,9 @@ const Addproduct = () => {
                                                                 </Row>
                                                                 <Row>
                                                                     <Col sm="12">
+                                                                    
                                                                         <CardTitle>Features and Compatibility</CardTitle>
+                                                                        <hr></hr>
                                                                     </Col>
                                                                 </Row>
                                                                 <Row>
@@ -617,12 +580,7 @@ const Addproduct = () => {
                                                                     <Col sm="6">
                                                                         <FormGroup>
                                                                             <Label htmlFor="fieldlink">Compatibility<span style={{ color: 'red' }}>*</span></Label>
-                                                                            {/* <select name="tools" value={tools} className="css-yk16xz-control form-select" style={{ width: '100%' }} aria-label="Default select example" onChange={({ target }) => setFormInputs(prevState => ({ ...prevState, [target.name]: target.value }))}>
-                                                                                <option selected>Select Tools</option>
-                                                                                {Tools.map((val, index) => {
-                                                                                    return <option value={val._id}>{val.name}</option>
-                                                                                })}
-                                                                            </select> */}
+                                                                            
                                                                             <Row>
                                                                                 <Col sm="11" style={{ margin: 'auto' }}>
                                                                                     {Tools.map((val, index) => {
@@ -634,28 +592,26 @@ const Addproduct = () => {
                                                                     </Col>
                                                                 </Row>
 
-
-                                                                {/* <div className="row form-group">
-                                                                    <label htmlFor="tooltip-enabled" className="text-md-right col-md-4 col-form-label">Highlight</label>
-                                                                    <div className="col-md-8">
-                                                                        <SunEditor id='highlight' setContents={highlight} name="highlight" placeholder="Add Highlights Here.." onChange={(e) => handleHighlightChange(e)} setOptions={{
-                                                                            height: 200,
-                                                                            buttonList: [
-                                                                                ['undo', 'redo'],
-                                                                                ['font', 'fontSize', 'formatBlock'],
-                                                                                ['paragraphStyle', 'blockquote'],
-                                                                                ['bold', 'underline', 'italic', 'strike'],
-                                                                                ['fontColor', 'hiliteColor', 'textStyle'],
-                                                                                ['removeFormat'],
-                                                                                ['outdent', 'indent'],
-                                                                                ['align', 'horizontalRule', 'list', 'lineHeight'],
-                                                                                ['table', 'link', 'image'],
-                                                                                ['fullScreen'],
-                                                                                ['preview', 'print'],
-                                                                            ]
-                                                                        }} />
-                                                                    </div>
-                                                                </div> */}
+                                                                <Row>
+                                                                    <Col sm="12">
+                                                                        <CardTitle>SEO</CardTitle>
+                                                                        <hr></hr>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                    <FormGroup>
+                                                                            <Label htmlFor="seodescription">Description</Label>
+                                                                            <Input name="seodescription" id="seodescription" value={seodescription} type="textarea" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col sm="6">
+                                                                    <FormGroup>
+                                                                            <Label htmlFor="seokeywords">Keywords</Label>
+                                                                            <Input name="seokeywords"  id="seokeywords" value={seokeywords} placeholder="Comma-seprated Keywords" type="text" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
                                                             </Form>
                                                         </div>
