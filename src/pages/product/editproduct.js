@@ -62,11 +62,13 @@ const Editproduct = (props) => {
         highlight: "",
         template: "",
         fonts: "",
-        productstatus: ""
+        productstatus: "",
+        seodescription:"",
+        seokeywords:""
     };
 
     const [{ category, subcategory, tools, title, admin, link, overview, highlight, template, fonts,
-        productstatus }, setFormInputs] = useState([]);
+        productstatus,seodescription,seokeywords }, setFormInputs] = useState([]);
 
     // onLoad get master table data
     useEffect(() => {
@@ -111,7 +113,7 @@ const Editproduct = (props) => {
             setFormInputs({
                 category: data.category, subcategory: data.subcategory, tools: data.tools._id, title: data.title,
                 admin: data.adminname, link: data.sharelink, overview: data.overview, highlight: data.highlight, template: data.template,
-                fonts: data.fonts, productstatus: data.productstatus
+                fonts: data.fonts, productstatus: data.productstatus,seodescription:data.seodescription,seokeywords:data.seokeywords
             });
 
         } catch (e) {
@@ -255,7 +257,7 @@ const Editproduct = (props) => {
             }
         }
         let formInputs = { category, subcategory, tools, title, admin, link, overview, highlight, template, fonts,
-            productstatus }
+            productstatus,seodescription,seokeywords }
 
         let productid = props.match.params.posturl;
         let response = await update(productid, formInputs, selectedImage, config);
@@ -638,6 +640,26 @@ const Editproduct = (props) => {
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
+                                                                <Row>
+                                                                    <Col sm="12">
+                                                                        <CardTitle>SEO</CardTitle>
+                                                                        <hr></hr>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="6">
+                                                                    <FormGroup>
+                                                                            <Label htmlFor="seodescription">Description</Label>
+                                                                            <Input name="seodescription" id="seodescription" value={seodescription} type="textarea" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col sm="6">
+                                                                    <FormGroup>
+                                                                            <Label htmlFor="seokeywords">Keywords</Label>
+                                                                            <Input name="seokeywords"  id="seokeywords" value={seokeywords} placeholder="Comma-seprated Keywords" type="text" className="form-control" onChange={({ target }) => {setFormInputs(prevState => ({ ...prevState, [target.name]: target.value })); setAlert({})}} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
                                                             </Form>
                                                         </div>
                                                     </div>
@@ -662,7 +684,6 @@ const Editproduct = (props) => {
                                                     </Card>
                                                 </Col>
                                             </Row>
-
                                             <Row>
                                                 <Col>
                                                     <Card body>

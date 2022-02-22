@@ -25,6 +25,8 @@ export async function save(formInputs, selectedImage, config,tempId) {
     formData.set('template', formInputs.template);
     formData.set('fonts', formInputs.fonts);
     formData.set('productstatus', formInputs.productstatus);
+    formData.set('seodescription', formInputs.seodescription);
+    formData.set('seokeywords', formInputs.seokeywords);
     formData.set('tempId', tempId);
     if (selectedImage != '') {
         formData.append("file", selectedImage);
@@ -52,6 +54,8 @@ export async function update(productid, formInputs, selectedImage, config) {
     formData.set('template', formInputs.template);
     formData.set('fonts', formInputs.fonts);
     formData.set('productstatus', formInputs.productstatus);
+    formData.set('seodescription', formInputs.seodescription);
+    formData.set('seokeywords', formInputs.seokeywords);
     if (selectedImage != '') {
         formData.append("file", selectedImage);
     }
