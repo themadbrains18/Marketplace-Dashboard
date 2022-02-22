@@ -191,24 +191,26 @@ const Editproduct = (props) => {
 
     let saveChanges = (e) => {
         e.preventDefault();
-
-        if (category == undefined) {
-            setAlert({ type: 'warning', message: 'Please select category' })
-        } 
-        else if (subcategory == undefined) {
-            setAlert({ type: 'warning', message: 'Please select subcategory' })
-        } 
-        else if (checkedTools.length == 0) {
-            setAlert({ type: 'warning', message: 'Please select Compatibility' })
-        }
-        else if (title == undefined) {
+        if (title == undefined) {
             setAlert({ type: 'warning', message: 'Please enter name' })
         } 
         else if (admin == undefined) {
             setAlert({ type: 'warning', message: 'Please enter admin name' })
         } 
+        else if (category == undefined) {
+            setAlert({ type: 'warning', message: 'Please select category' })
+        } 
+        else if (subcategory == undefined) {
+            setAlert({ type: 'warning', message: 'Please select subcategory' })
+        } 
         else if (productstatus == undefined) {
             setAlert({ type: 'warning', message: 'Please select product status' })
+        }
+        else if (template == undefined) {
+            setAlert({ type: 'warning', message: 'Please select template type' })
+        } 
+        else if (checkedTools.length == 0) {
+            setAlert({ type: 'warning', message: 'Please select Compatibility' })
         }
         // else if (link == undefined) {
         //     setValidateMessage('Please enter shareable link');
@@ -561,7 +563,7 @@ const Editproduct = (props) => {
                                                                     <Col sm="12">
                                                                         <FormGroup>
                                                                             <Label htmlFor="fielddescription">Description</Label>
-                                                                            <SunEditor id='fielddescription' setContents={overview} name="overview" placeholder="Add Overview Here.." onChange={(e) => handleOverviewChange(e)} setOptions={{
+                                                                            <SunEditor id='fielddescription' setContents={overview} name="overview" placeholder="Add Overview Here.." onChange={(e) => {handleOverviewChange(e); setAlert({})}} setOptions={{
                                                                                 height: 200,
                                                                                 buttonList: [
                                                                                     ['undo', 'redo'],
@@ -668,7 +670,7 @@ const Editproduct = (props) => {
                                                         <div className="row form-group">
                                                             <div className="col-lg-12">
                                                                 <div className="input-group mb-4 px-2 py-2 rounded-pill bg-light-gray">
-                                                                    <input id="upload" name="listImage" type="file" onChange={(e) => imageChange(e)} className="form-control border-0 Elements_upload__3DkRJ" />
+                                                                    <input id="upload" name="listImage" type="file" onChange={(e) => {imageChange(e); ; setAlert({})}} className="form-control border-0 Elements_upload__3DkRJ" />
                                                                     <label id="upload-label" htmlFor="upload" className="font-weight-light text-muted Elements_uploadLabel__3xshw">Choose file</label>
                                                                     <div className="input-group-append">
                                                                         <label htmlFor="upload" className="btn btn-light m-0 rounded-pill px-4"><i className="fa fa-cloud-upload mr-2 text-muted"></i></label>

@@ -137,29 +137,29 @@ const Addproduct = () => {
     let saveChanges = (e) => {
         e.preventDefault();
         console.log(checkedTools);
-        if (category == undefined) {
-            setAlert({ type: 'warning', message: 'Please select category' })
-        }
-        else if (subcategory == undefined) {
-            setAlert({ type: 'warning', message: 'Please select subcategory' })
-        }
-        else if (checkedTools.length == 0) {
-            setAlert({ type: 'warning', message: 'Please select Compatibility' })
-        }
-        else if (title == undefined) {
+        if (title == undefined) {
             setAlert({ type: 'warning', message: 'Please enter title' })
         }
         else if (admin == undefined) {
             setAlert({ type: 'warning', message: 'Please enter admin name' })
         }
-        // else if (fonts == undefined) {
-        //     setAlert({ type: 'warning', message: 'Please enter font style' })
-        // } 
+        else if (category == undefined) {
+            setAlert({ type: 'warning', message: 'Please select category' })
+        }
+        else if (subcategory == undefined) {
+            setAlert({ type: 'warning', message: 'Please select subcategory' })
+        }
+        else if (template == undefined) {
+            setAlert({ type: 'warning', message: 'Please select template type' })
+        } 
         else if (productstatus == undefined) {
             setAlert({ type: 'warning', message: 'Please select product status' })
         }
-        else if (selectedImage == '' && selectedImage == undefined) {
-            setAlert({ type: 'warning', message: 'Please upload image' })
+        else if (checkedTools.length == 0) {
+            setAlert({ type: 'warning', message: 'Please select Compatibility' })
+        }
+        else if (selectedImage == '' || selectedImage == undefined) {
+            setAlert({ type: 'warning', message: 'Please upload product image' })
         }
         else {
             saveProduct();
