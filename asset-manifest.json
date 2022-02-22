@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/Marketplace-Dashboard/static/css/main.e4966fa0.chunk.css",
-    "main.js": "/Marketplace-Dashboard/static/js/main.8468b4a7.chunk.js",
-    "main.js.map": "/Marketplace-Dashboard/static/js/main.8468b4a7.chunk.js.map",
+    "main.js": "/Marketplace-Dashboard/static/js/main.9fbff98d.chunk.js",
+    "main.js.map": "/Marketplace-Dashboard/static/js/main.9fbff98d.chunk.js.map",
     "runtime-main.js": "/Marketplace-Dashboard/static/js/runtime-main.4b9cf069.js",
     "runtime-main.js.map": "/Marketplace-Dashboard/static/js/runtime-main.4b9cf069.js.map",
     "static/css/2.b1d900dc.chunk.css": "/Marketplace-Dashboard/static/css/2.b1d900dc.chunk.css",
@@ -50,6 +50,6 @@
     "static/css/2.b1d900dc.chunk.css",
     "static/js/2.3ef2b78e.chunk.js",
     "static/css/main.e4966fa0.chunk.css",
-    "static/js/main.8468b4a7.chunk.js"
+    "static/js/main.9fbff98d.chunk.js"
   ]
 }
