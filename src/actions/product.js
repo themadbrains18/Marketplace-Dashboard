@@ -12,7 +12,7 @@ export async function getProduct() {
     return await axios.get(apiurl + "product/getAll");
 }
 
-export async function save(formInputs, selectedImage, config) {
+export async function save(formInputs, selectedImage, config,tempId) {
     let formData = new FormData();
     formData.set('category', formInputs.category);
     formData.set('subcategory', formInputs.subcategory);
@@ -23,6 +23,9 @@ export async function save(formInputs, selectedImage, config) {
     formData.set('overview', formInputs.overview);
     formData.set('highlight', formInputs.highlight);
     formData.set('template', formInputs.template);
+    formData.set('fonts', formInputs.fonts);
+    formData.set('productstatus', formInputs.productstatus);
+    formData.set('tempId', tempId);
     if (selectedImage != '') {
         formData.append("file", selectedImage);
     }
@@ -47,6 +50,8 @@ export async function update(productid, formInputs, selectedImage, config) {
     formData.set('overview', formInputs.overview);
     formData.set('highlight', formInputs.highlight);
     formData.set('template', formInputs.template);
+    formData.set('fonts', formInputs.fonts);
+    formData.set('productstatus', formInputs.productstatus);
     if (selectedImage != '') {
         formData.append("file", selectedImage);
     }
@@ -79,6 +84,32 @@ export async function savePreview(productId, selectedPreviewImage, config) {
         formData.append("previewImage", selectedPreviewImage[j]);
     }
     return await axios.post(apiurl + `productpreview`, formData, config).then(function (response) {
+        if (response.data) {
+            return response;
+        }
+    });
+}
+
+export async function saveHeroImage(productId, selectedHeroImage, config) {
+    let formData = new FormData();
+    formData.set('productid', productId);
+    for (let j = 0; j < selectedHeroImage.length; j++) {
+        formData.append("heroImage", selectedHeroImage[j]);
+    }
+    return await axios.post(apiurl + `productheroimage`, formData, config).then(function (response) {
+        if (response.data) {
+            return response;
+        }
+    });
+}
+
+export async function saveThumbImage(productId, selectedHeroImage, config) {
+    let formData = new FormData();
+    formData.set('productid', productId);
+    for (let j = 0; j < selectedHeroImage.length; j++) {
+        formData.append("thumbImage", selectedHeroImage[j]);
+    }
+    return await axios.post(apiurl + `productthumbimage`, formData, config).then(function (response) {
         if (response.data) {
             return response;
         }
